@@ -6,14 +6,11 @@ from django.http import HttpResponse
 
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .models import Division, Employee, StructureComponent
-from .serializers import DivisionSerializer, EmployeeSerializer
+from .models import Division, Employee, StructureComponent, Position
+from .serializers import PostionSerializer
 
 class OrganizationStructure(APIView):
     def get(self, request):
-        structures = StructureComponent.objects.all()
-        for i in structures:
-            print(i)
-        serializer = EmployeeSerializer(structures)
-        r = serializer.data
-        return Response({"structure": serializer.data})
+        structures = Position.objects.all()
+        serializer = PostionSerializer(structures, many=True)
+        return Response({"positions": serializer.data})

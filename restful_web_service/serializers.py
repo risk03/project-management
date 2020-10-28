@@ -1,27 +1,8 @@
 from rest_framework import serializers
 
-from restful_web_service.models import Division, Employee, StructureComponent
+from restful_web_service.models import Division, Employee, StructureComponent, Position
 
-class StructureComponentSerializer(serializers.ModelSerializer):
-    pass
-class EmployeeSerializer(StructureComponentSerializer):
-    pass
-class DivisionSerializer(StructureComponentSerializer):
-    pass
-
-class StructureComponentSerializer(serializers.ModelSerializer):
-    employee = EmployeeSerializer(many=True, read_only=True)
-    division = DivisionSerializer(many=True, read_only=True)
-    fields = ['employee', 'division']
-
-class EmployeeSerializer(StructureComponentSerializer):
+class PostionSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Employee
-        fields = ['full_name', 'position', 'short_name']
-
-class DivisionSerializer(StructureComponentSerializer):
-    subdivisions = StructureComponentSerializer(many=True, read_only=True)
-
-    class Meta:
-        model = Division
-        fields = ['name', 'subdivisions']
+        model = Position
+        fields = ["id", "name"]
