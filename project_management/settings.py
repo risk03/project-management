@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'restful_web_service.apps.RestfulWebServiceConfig',
+    # 'rest_client.apps.RestClientConfig'
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
