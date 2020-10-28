@@ -1,15 +1,17 @@
-from django.db.models import QuerySet
-from django.shortcuts import render
-
 # Create your views here.
-from django.http import HttpResponse
-
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .models import Division, Employee, StructureComponent, Position
+
+from .models import Position
 from .serializers import PostionSerializer
 
+
 class OrganizationStructure(APIView):
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    permission_classes = [IsAuthenticated]
+
     def get(self, request):
         structures = Position.objects.all()
         serializer = PostionSerializer(structures, many=True)
