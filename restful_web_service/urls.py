@@ -1,7 +1,7 @@
 from django.urls import path
-from .views import OrganizationStructure
+from .views import PositionView
 app_name = "restful_web_service"
 # app_name will help us do a reverse look-up latter.
 urlpatterns = [
-    path('structure/', OrganizationStructure.as_view()),
+    path('position/', PositionView.as_view()),
 ]

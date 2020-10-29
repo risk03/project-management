@@ -3,8 +3,8 @@ from django.shortcuts import render
 
 # Create your views here.
 from requests.auth import HTTPBasicAuth
+from .configuration import rest_password, rest_user, rest_service
 
-
-def vote(request):
-    resp = requests.get('https://www.nbrb.by/api/exrates/currencies', auth=HTTPBasicAuth('rest_client', 'qwop'))
-    return render(request, 'positions.html')
+def position(request):
+    resp = requests.get(rest_service + 'position/', auth=HTTPBasicAuth(rest_user, rest_password))
+    return render(request, 'rest_client/positions.html', {'positions':resp.json()['positions']})

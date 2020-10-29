@@ -8,11 +8,16 @@ from .models import Position
 from .serializers import PostionSerializer
 
 
-class OrganizationStructure(APIView):
+class PositionView(APIView):
     authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
+        structures = Position.objects.all()
+        serializer = PostionSerializer(structures, many=True)
+        return Response({"positions": serializer.data})
+
+    def post(self, request):
         structures = Position.objects.all()
         serializer = PostionSerializer(structures, many=True)
         return Response({"positions": serializer.data})

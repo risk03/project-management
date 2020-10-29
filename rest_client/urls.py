@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import vote
+from .views import position
 urlpatterns = [
-    path('structure/', vote, name='vote'),
+    path('position/', position, name='position'),
 ]
