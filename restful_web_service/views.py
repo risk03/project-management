@@ -26,7 +26,12 @@ class PositionView(APIView):
 class ProjectView(APIView):
     authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [IsAuthenticated]
-    def get(self, request):
-        projects = models.TaskGroup.objects.filter(parent=None)
-        serializer = serializers.TaskGroupSerializer(projects, many=True)
-        return Response({"projects": serializer.data})
+    def get(self, request, pk=None):
+        if pk is None:
+            projects = models.TaskGroup.objects.filter(parent=None)
+            serializer = serializers.TaskGroupSerializer(projects, many=True)
+            return Response({"projects": serializer.data})
+        else:
+            projects = models.TaskComponent.objects.filter(id=pk)
+            serializer = serializers.TaskComponentSerializer(projects,many=True)
+            return Response({"projects": serializer.data})
