@@ -1,7 +1,8 @@
 from django.urls import path
-from .views import PositionView
+import restful_web_service.views as views
 app_name = "restful_web_service"
 # app_name will help us do a reverse look-up latter.
 urlpatterns = [
-    path('position/', PositionView.as_view()),
+    path('position/', views.PositionView.as_view()),
+    path('projects/', views.ProjectView.as_view())
 ]

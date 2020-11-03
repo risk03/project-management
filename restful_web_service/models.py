@@ -3,16 +3,23 @@ from django.db import models
 
 # Create your models here.
 class TaskComponent(models.Model):
-    parent = models.ForeignKey("TaskGroup", null=True, blank=True, on_delete=models.CASCADE)
+    parent = models.ForeignKey("TaskGroup", null=True, blank=True, on_delete=models.CASCADE, related_name='child')
     name = models.CharField(max_length=255, null=False)
+    creator = models.ForeignKey("Employee", null=False, on_delete=models.CASCADE, related_name='creation')
+    responsible = models.ForeignKey("Employee", null=False, on_delete=models.CASCADE, related_name='resonsibility')
 
     def __str__(self):
         return self.name
 
 
 class TaskLeaf(TaskComponent):
-    pass
+    start = models.DateTimeField()
+    end = models.DateTimeField()
 
+class Artefact(models.Model):
+    title = models.CharField(max_length=255, null=False)
+    description = models.CharField(max_length=1024, null=True)
+    task = models.ForeignKey("TaskLeaf", null=False, on_delete=models.CASCADE)
 
 class TaskGroup(TaskComponent):
     pass
