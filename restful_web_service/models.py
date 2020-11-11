@@ -34,7 +34,7 @@ class TaskSequence(models.Model):
 
 
 class StructureComponent(models.Model):
-    parent = models.ForeignKey("Division", null=True, blank=True, on_delete=models.CASCADE, related_name="subcomponents")
+    parent = models.ForeignKey("Division", null=True, blank=True, on_delete=models.CASCADE, related_name="child")
 
 
 class Division(StructureComponent):
@@ -62,7 +62,7 @@ class Position(models.Model):
 
 class SystemComponent(models.Model):
     name = models.CharField(max_length=255, null=False)
-
+    parent = models.ForeignKey("SystemGroup", null=True, blank=True, on_delete=models.CASCADE, related_name="child")
     def __str__(self):
         return self.name
 
