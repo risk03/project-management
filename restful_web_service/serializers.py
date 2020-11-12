@@ -44,6 +44,14 @@ class TaskSequenceSerializer(serializers.ModelSerializer):
 
 
 class StructureComponentSerializer(serializers.ModelSerializer):
+    def to_representation(self, instance):
+        if hasattr(instance, 'division'):
+            return DivisionSerializer(instance=instance.division).data
+        elif hasattr(instance, 'employee'):
+            return EmployeeSerializer(instance=instance.employee).data
+        else:
+            print(1)
+
     class Meta:
         model = models.StructureComponent
         fields = '__all__'
@@ -51,6 +59,7 @@ class StructureComponentSerializer(serializers.ModelSerializer):
 
 class DivisionSerializer(serializers.ModelSerializer):
     child = StructureComponentSerializer(many=True, read_only=True)
+
     class Meta:
         model = models.Division
         fields = '__all__'
@@ -69,6 +78,14 @@ class PositionSerializer(serializers.ModelSerializer):
 
 
 class SystemComponentSerializer(serializers.ModelSerializer):
+    def to_representation(self, instance):
+        if hasattr(instance, 'systemgroup'):
+            return SystemGroupSerializer(instance=instance.systemgroup).data
+        elif hasattr(instance, 'systempart'):
+            return SystemPartSerializer(instance=instance.systempart).data
+        else:
+            print(1)
+
     class Meta:
         model = models.SystemComponent
         fields = '__all__'

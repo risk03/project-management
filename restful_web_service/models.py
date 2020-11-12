@@ -16,10 +16,12 @@ class TaskLeaf(TaskComponent):
     start = models.DateTimeField()
     end = models.DateTimeField()
 
+
 class Artefact(models.Model):
     title = models.CharField(max_length=255, null=False)
     description = models.CharField(max_length=1024, null=True)
     task = models.ForeignKey("TaskLeaf", null=False, on_delete=models.CASCADE)
+
 
 class TaskGroup(TaskComponent):
     pass
@@ -63,6 +65,7 @@ class Position(models.Model):
 class SystemComponent(models.Model):
     name = models.CharField(max_length=255, null=False)
     parent = models.ForeignKey("SystemGroup", null=True, blank=True, on_delete=models.CASCADE, related_name="child")
+
     def __str__(self):
         return self.name
 

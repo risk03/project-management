@@ -7,6 +7,14 @@ app_name = "restful_web_service"
 urlpatterns = [
     path('positions/', views.PositionView.as_view()),
     path('positions/<int:pk>/', views.PositionView.as_view()),
-    path('projects/', views.ProjectView.as_view()),
-    path('projects/<int:pk>/', views.ProjectView.as_view()),
+    path('tasks/', views.TaskView.as_view()),
+    path('tasks/<int:pk>/', views.TaskView.as_view()),
+    path('systems/', views.SystemView.as_view()),
+    path('systems/<int:pk>/', views.SystemView.as_view()),
+    path('structures/', views.StructureView.as_view()),
+    path('structures/<int:pk>/', views.StructureView.as_view()),
+    path('artefacts/', views.ArtefactView.as_view()),
+    path('artefacts/<int:pk>/', views.ArtefactView.as_view()),
+    path('sequences/', views.TaskSequenceView.as_view()),
+    path('sequences/<int:pk>/', views.TaskSequenceView.as_view()),
 ]
