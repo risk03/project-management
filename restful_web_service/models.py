@@ -50,6 +50,10 @@ class Employee(StructureComponent):
     full_name = models.CharField(max_length=255, null=False)
     short_name = models.CharField(max_length=255, null=True)
     position = models.ForeignKey("Position", null=False, blank=False, on_delete=models.CASCADE)
+    login = models.CharField(max_length=32, null=True)
+    salt = models.CharField(max_length=32, null=True)
+    hash = models.CharField(max_length=32, null=True)
+
 
     def __str__(self):
         return (self.short_name if self.short_name else self.full_name) + ', ' + self.position.name
