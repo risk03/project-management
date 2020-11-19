@@ -13,7 +13,8 @@
     <a href="/client/logout/">Выход</a>
 </div>
 <a href="/client/tasks/{{ parent }}">Наверх</a>
-<button type="submit" name="delete">Удалить</button>
+<form><button type="submit" name="delete">Удалить</button>
+</form>
 Задания:
 {% for task in tasks %}
     <a href="/client/tasks/{{ task.id }}"> {{ task.name }}</a>

@@ -20,7 +20,7 @@ class LoginView(APIView):
         if not user:
             return Response({'status': 'failed'})
         if hashlib.md5((request.data['password'] + user.salt).encode('utf-8')).hexdigest() == user.hash:
-                return Response({'status': 'success', 'id': user.id})
+            return Response({'status': 'success', 'id': user.id})
         else:
             return Response({'status': 'failed'})
 
@@ -105,9 +105,12 @@ class TaskView(APIView):
     def delete(self, request, pk):
         tasks = get_object_or_404(models.TaskComponent.objects.all(), pk=pk)
         tasks.delete()
-        return Response({
-            "message": "Task with id `{}` has been deleted.".format(pk)
-        }, status=204)
+        try:
+            return Response({
+                "message": "Task with id `{}` has been deleted.".format(pk)
+            }, status=204)
+        except Exception:
+            pass
 
 
 # noinspection PyMethodMayBeStatic
@@ -207,6 +210,7 @@ class EmployeeView(APIView):
             employees = models.Employee.objects.filter(id=pk)
         serializer = serializers.EmployeeSerializer(employees, many=True)
         return Response({"employees": serializer.data})
+
 
 # noinspection PyMethodMayBeStatic
 class ArtefactView(APIView):

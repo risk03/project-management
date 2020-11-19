@@ -54,7 +54,6 @@ class Employee(StructureComponent):
     salt = models.CharField(max_length=32, null=True)
     hash = models.CharField(max_length=32, null=True)
 
-
     def __str__(self):
         return (self.short_name if self.short_name else self.full_name) + ', ' + self.position.name
 
