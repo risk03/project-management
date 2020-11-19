@@ -1,4 +1,6 @@
 # Create your views here.
+import hashlib
+
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
@@ -7,6 +9,20 @@ from rest_framework.views import APIView
 
 import restful_web_service.models as models
 import restful_web_service.serializers as serializers
+
+
+class LoginView(APIView):
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = models.Employee.objects.filter(login=request.data['login']).first()
+        if not user:
+            return Response({'status': 'failed'})
+        if hashlib.md5((request.data['password'] + user.salt).encode('utf-8')).hexdigest() == user.hash:
+                return Response({'status': 'success', 'id': user.id})
+        else:
+            return Response({'status': 'failed'})
 
 
 # noinspection PyMethodMayBeStatic

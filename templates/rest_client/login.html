@@ -8,6 +8,9 @@
 </head>
 <body>
 <form>
+    {% if failed %}
+        Неверный логин или пароль
+    {% endif %}
     <label><input type="text" required name="login" placeholder="Логин"/></label>
     <label><input type="password" required name="password" placeholder="Пароль"></label>
     <button type="submit">Войти</button>
