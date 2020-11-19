@@ -17,5 +17,6 @@ urlpatterns = [
     path('artefacts/<int:pk>/', views.ArtefactView.as_view()),
     path('sequences/', views.TaskSequenceView.as_view()),
     path('sequences/<int:pk>/', views.TaskSequenceView.as_view()),
-    path('login/', views.LoginView.as_view())
+    path('login/', views.LoginView.as_view()),
+    path('employees/', views.EmployeeView.as_view())
 ]

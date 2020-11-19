@@ -50,7 +50,7 @@ class Employee(StructureComponent):
     full_name = models.CharField(max_length=255, null=False)
     short_name = models.CharField(max_length=255, null=True)
     position = models.ForeignKey("Position", null=False, blank=False, on_delete=models.CASCADE)
-    login = models.CharField(max_length=32, null=True)
+    login = models.CharField(max_length=32, null=True, unique=True)
     salt = models.CharField(max_length=32, null=True)
     hash = models.CharField(max_length=32, null=True)
 

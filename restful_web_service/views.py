@@ -196,6 +196,19 @@ class StructureView(APIView):
 
 
 # noinspection PyMethodMayBeStatic
+class EmployeeView(APIView):
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, pk=None):
+        if pk is None:
+            employees = models.Employee.objects.all()
+        else:
+            employees = models.Employee.objects.filter(id=pk)
+        serializer = serializers.EmployeeSerializer(employees, many=True)
+        return Response({"employees": serializer.data})
+
+# noinspection PyMethodMayBeStatic
 class ArtefactView(APIView):
     authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [IsAuthenticated]
