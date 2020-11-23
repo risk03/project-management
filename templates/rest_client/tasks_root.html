@@ -32,7 +32,7 @@
     </div>
 </nav>
 <main role="main" class="container-fluid" style="padding-top: 4.5rem">
-    <table class="table">
+    <table class="table table-striped">
         <thead>
         <tr>
             <th scope="col">#</th>
@@ -46,8 +46,8 @@
             <tr>
                 <th scope="row">{{ task.id }}</th>
                 <td><a href="/client/tasks/{{ task.id }}"> {{ task.name }}</a></td>
-                <td><a href="/client/positions/{{ task.responsible_id }}">{{ task.responsible }}</a></td>
-                <td><a href="/client/positions/{{ task.creator_id }}">{{ task.creator }}</a></td>
+                <td><a href="/client/structures/{{ task.responsible_id }}">{{ task.responsible }}</a></td>
+                <td><a href="/client/structures/{{ task.creator_id }}">{{ task.creator }}</a></td>
             </tr>
         {% endfor %}
         <tr>

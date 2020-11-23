@@ -201,11 +201,8 @@ class DivisionView(APIView):
     authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [IsAuthenticated]
 
-    def get(self, request, pk=None):
-        if pk is None:
-            tasks = models.Division.objects.all()
-        else:
-            tasks = models.Division.objects.filter(id=pk)
+    def get(self, request):
+        tasks = models.Division.objects.all()
         serializer = serializers.StructureComponentSerializer(tasks, many=True)
         return Response({"divisions": serializer.data})
 
@@ -306,3 +303,12 @@ class SystemView(APIView):
         return Response({
             "message": "System with id `{}` has been deleted.".format(pk)
         }, status=204)
+
+class SystemGroupView(APIView):
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        systems = models.SystemGroup.objects.all()
+        serializer = serializers.SystemComponentSerializer(systems, many=True)
+        return Response({"systemgroups": serializer.data})

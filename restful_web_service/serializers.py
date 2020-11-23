@@ -92,6 +92,8 @@ class SystemComponentSerializer(serializers.ModelSerializer):
 
 
 class SystemGroupSerializer(serializers.ModelSerializer):
+    child = SystemComponentSerializer(many=True, read_only=True)
+
     class Meta:
         model = models.SystemGroup
         fields = '__all__'

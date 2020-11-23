@@ -68,7 +68,6 @@ class Position(models.Model):
     def __str__(self):
         return self.name
 
-
 class SystemComponent(models.Model):
     name = models.CharField(max_length=255, null=False)
     parent = models.ForeignKey("SystemGroup", null=True, blank=True, on_delete=models.CASCADE, related_name="child")

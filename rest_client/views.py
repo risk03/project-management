@@ -28,11 +28,18 @@ def check_login(session):
         return None
 
 
-def position(request, pk=None):
+def positions_root(request, pk=None):
     if not check_login(request.session):
         return redirect('login')
     resp = rest(GET, 'positions/')
-    return render(request, 'rest_client/positions.html', {'positions': resp.json()['positions']})
+    return render(request, 'rest_client/positions_root.html', {'positions': resp.json()['positions']})
+
+
+def positions(request, pk):
+    if not check_login(request.session):
+        return redirect('login')
+    resp = rest(GET, 'positions/' + str(pk)).json()['positions'][0]
+    return render(request, 'rest_client/positions.html', {'name': resp['name']})
 
 
 def projects(request):
@@ -211,4 +218,61 @@ def add_structure(request):
 
 
 def add_employee(request):
+    return None
+
+
+def systems_root(request):
+    if not check_login(request.session):
+        return redirect('login')
+    tasks = rest(GET, 'systems/')
+    j = tasks.json()
+    formated = []
+    for i in j['systems']:
+        task = {'name': i['name'], 'id': i['id']}
+        formated.append(task)
+    return render(request, 'rest_client/systems_root.html', {'systems': formated})
+
+
+def systems(request, pk=None):
+    if not check_login(request.session):
+        return redirect('login')
+    tasks = rest(GET, 'systems/' + str(pk))
+    j = tasks.json()['systems'][0]
+    if 'delete' in request.GET:
+        rest('DELETE', 'systems/' + str(pk))
+        return redirect('/client/systems/' + ('' if j['parent'] is None else str(j['parent'])))
+    if 'save' in request.GET:
+        rest('put', 'systems/' + str(pk) + '/', {
+            "systems": {
+                "name": request.GET['name'],
+                "responsible": request.GET['responsible']
+            },
+            "isgroup": True
+        })
+        return redirect('/client/systems/' + str(pk))
+    formated = []
+    if 'child' in j:
+        is_group = True
+        for i in j['child']:
+            systems = {'id': i['id']}
+            systems['name'] = i['name']
+            if 'child' in i:
+                systems['is_group'] = True
+            else:
+                systems['is_group'] = False
+            formated.append(systems)
+    else:
+        is_group = False
+    context = {'systems': formated, 'parent_id': ('' if j['parent'] is None else j['parent']),
+               'name': (j['name'] if 'name' in j else j['full_name']), 'is_group': is_group, 'id': j['id'], }
+    if not is_group:
+        parents = []
+        for i in rest('get', 'systemgroups/').json()['systemgroups']:
+            parents.append({'id': i['id'], 'name': i['name']})
+        context['parents'] = parents
+    return render(request, 'rest_client/systems.html',
+                  context)
+
+
+def add_system(request, pk=None):
     return None

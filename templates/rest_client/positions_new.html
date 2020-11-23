@@ -31,26 +31,15 @@
         <a class="nav-link text-light" href="/client/logout/">Выход</a>
     </div>
 </nav>
-<main role="main" class="container-fluid" style="padding-top: 4.5rem">
-    <table class="table table-striped">
-        <thead>
-        <tr>
-            <th scope="col">#</th>
-            <th scope="col">Название</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for structure in structures %}
-            <tr>
-                <th scope="row">{{ structure.id }}</th>
-                <td><a href="/client/structures/{{ structure.id }}"> {{ structure.name }}</a></td>
-            </tr>
-        {% endfor %}
-        <tr>
-            <td colspan="4" class="text-center"><a href="/client/structures/add_group/">Новое подразделение</a></td>
-        </tr>
-        </tbody>
-    </table>
-</main>
+<form class="form-signin">
+    <h1 class="h2 mb-4 font-">АСУП</h1>
+    <h1 class="h3 mb-3 font-weight-normal">Вход</h1>
+    <span class="text-danger">{% if failed %}Неверный логин или пароль{% else %} {% endif %}</span>
+    <label for="inputLogin" class="sr-only">Логин</label>
+    <input type="text" id="inputLogin" name="login" class="form-control" placeholder="Логин" required="" autofocus="">
+    <label for="inputPassword" class="sr-only">Пароль</label>
+    <input type="password" id="inputPassword" name="password" class="form-control" placeholder="Пароль" required="">
+    <button class="btn btn-lg btn-primary btn-block" type="submit">Войти</button>
+</form>
 </body>
 </html>

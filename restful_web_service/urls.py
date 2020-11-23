@@ -10,6 +10,7 @@ urlpatterns = [
     path('tasks/', views.TaskView.as_view()),
     path('tasks/<int:pk>/', views.TaskView.as_view()),
     path('systems/', views.SystemView.as_view()),
+    path('systemgroups/', views.SystemGroupView.as_view()),
     path('systems/<int:pk>/', views.SystemView.as_view()),
     path('structures/', views.StructureView.as_view()),
     path('structures/<int:pk>/', views.StructureView.as_view()),
