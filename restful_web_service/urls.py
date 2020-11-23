@@ -13,6 +13,7 @@ urlpatterns = [
     path('systems/<int:pk>/', views.SystemView.as_view()),
     path('structures/', views.StructureView.as_view()),
     path('structures/<int:pk>/', views.StructureView.as_view()),
+    path('divisions/', views.DivisionView.as_view()),
     path('artefacts/', views.ArtefactView.as_view()),
     path('artefacts/<int:pk>/', views.ArtefactView.as_view()),
     path('sequences/', views.TaskSequenceView.as_view()),

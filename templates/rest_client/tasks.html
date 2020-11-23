@@ -7,21 +7,79 @@
           integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
 </head>
 <body>
-<div>
-    <a href="/client/tasks/">Проекты</a>
-    <a href="/client/positions/">Должности</a>
-    <a href="/client/logout/">Выход</a>
-</div>
-<a href="/client/tasks/{{ parent }}">Наверх</a>
-<form><button type="submit" name="delete">Удалить</button>
-</form>
-Задания:
-{% for task in tasks %}
-    <a href="/client/tasks/{{ task.id }}"> {{ task.name }}</a>
-    <a href="/client/positions/{{ task.responsible_id }}">{{ task.responsible }}</a>
-    <a href="/client/positions/{{ task.creator_id }}">{{ task.creator }}</a>
-    <br>
-{% endfor %}
-<a href="/client/tasks/add">Новый проект</a>
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <a class="navbar-brand" href="#">АСУП</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse"
+            aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a class="nav-link" href="/client/tasks/">Проекты<span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/client/structures/">Сотрудники</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/client/systems/">Системы</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/client/positions/">Должности</a>
+            </li>
+        </ul>
+        <a class="nav-link text-light" href="/client/logout/">Выход</a>
+    </div>
+</nav>
+
+<main role="main" class="container-fluid" style="padding-top: 4.5rem">
+    <a class="btn btn-primary" href="/client/tasks/{{ parent }}">Наверх</a>
+    <form>
+        <label>
+            <input class="h3" type="text" name="name" value="{{ name }}">
+        </label>
+        <label>
+            <select name="responsible">
+                {% for i in employees %}
+                    <option value="{{ i.id }}" {% if responsible == i.id %}
+                            selected{% endif %}>{{ i.short_name }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <button type="submit" name="save" class="btn btn-primary">Сохранить</button>
+        <button type="submit" name="delete" class="btn btn-danger">Удалить</button>
+    </form>
+    {% if is_group %}
+        <h1 class="h1">Подзадачи</h1>
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Название</th>
+                <th scope="col">Ответственный</th>
+                <th scope="col">Создатель</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for task in tasks %}
+                <tr>
+                    <th scope="row">{{ task.id }}</th>
+                    <td><a href="/client/tasks/{{ task.id }}"
+                           {% if task.is_group %}class="font-weight-bold" {% endif %}> {{ task.name }}</a></td>
+                    <td><a href="/client/positions/{{ task.responsible_id }}">{{ task.responsible }}</a></td>
+                    <td><a href="/client/positions/{{ task.creator_id }}">{{ task.creator }}</a></td>
+                </tr>
+            {% endfor %}
+            <tr>
+                <td colspan="4" class="text-center">
+                    <div class="row justify-content-center">
+                        <div class="col-sm-2"><a href="/client/tasks/add_group/{{ id }}">Новая группа подзадач</a></div>
+                        <div class="col-sm-2"><a href="/client/tasks/add_leaf/{{ id }}">Новая подзадача</a></div>
+                    </div>
+            </tr>
+            </tbody>
+        </table>
+    {% endif %}
+</main>
 </body>
 </html>

@@ -13,3 +13,5 @@ admin.site.register(models.TaskSequence)
 admin.site.register(models.Division)
 admin.site.register(models.Employee)
 admin.site.register(models.Position)
+
+admin.site.register(models.Artefact)

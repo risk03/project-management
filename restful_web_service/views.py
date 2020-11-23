@@ -197,6 +197,17 @@ class StructureView(APIView):
             "message": "Structure with id `{}` has been deleted.".format(pk)
         }, status=204)
 
+class DivisionView(APIView):
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, pk=None):
+        if pk is None:
+            tasks = models.Division.objects.all()
+        else:
+            tasks = models.Division.objects.filter(id=pk)
+        serializer = serializers.StructureComponentSerializer(tasks, many=True)
+        return Response({"divisions": serializer.data})
 
 # noinspection PyMethodMayBeStatic
 class EmployeeView(APIView):

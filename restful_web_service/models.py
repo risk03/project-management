@@ -20,7 +20,10 @@ class TaskLeaf(TaskComponent):
 class Artefact(models.Model):
     title = models.CharField(max_length=255, null=False)
     description = models.CharField(max_length=1024, null=True)
-    task = models.ForeignKey("TaskLeaf", null=False, on_delete=models.CASCADE)
+    task = models.ForeignKey("TaskLeaf", null=False, on_delete=models.CASCADE, related_name="artefact")
+
+    def __str__(self):
+        return self.title + ' - ' + self.task.name
 
 
 class TaskGroup(TaskComponent):
@@ -74,9 +77,9 @@ class SystemComponent(models.Model):
         return self.name
 
 
-class SystemGroup(StructureComponent):
+class SystemGroup(SystemComponent):
     pass
 
 
-class SystemPart(StructureComponent):
+class SystemPart(SystemComponent):
     pass
