@@ -158,7 +158,7 @@ class StructureView(APIView):
 
     def get(self, request, pk=None):
         if pk is None:
-            tasks = models.StructureComponent.objects.filter(parent=None)
+            tasks = models.Division.objects.filter(parent=None)
         else:
             tasks = models.StructureComponent.objects.filter(id=pk)
         serializer = serializers.StructureComponentSerializer(tasks, many=True)
@@ -173,7 +173,7 @@ class StructureView(APIView):
             serializer = serializers.EmployeeSerializer(data=structures)
         if serializer.is_valid(raise_exception=True):
             structures = serializer.save()
-        return Response({"success": "Structure '{}' created successfully".format(structures.name)})
+        return Response({"success": "Structure '{}' created successfully".format(pk)})
 
     def put(self, request, pk):
         isgroup = request.data.get("isgroup")
@@ -187,15 +187,24 @@ class StructureView(APIView):
         if serializer.is_valid(raise_exception=True):
             saved = serializer.save()
             return Response({
-                "success": "Employee '{}' updated successfully".format(saved.name)
+                "success": "Structure '{}' updated successfully".format(pk)
             })
 
     def delete(self, request, pk):
         tasks = get_object_or_404(models.StructureComponent.objects.all(), pk=pk)
-        tasks.delete()
+        deldiv(tasks)
         return Response({
             "message": "Structure with id `{}` has been deleted.".format(pk)
         }, status=204)
+
+
+def deldiv(division):
+    if hasattr(division, 'division'):
+        subs = division.division.child.all()
+        for sub in subs:
+            deldiv(sub)
+        division.delete()
+
 
 class DivisionView(APIView):
     authentication_classes = [SessionAuthentication, BasicAuthentication]
@@ -205,6 +214,7 @@ class DivisionView(APIView):
         tasks = models.Division.objects.all()
         serializer = serializers.StructureComponentSerializer(tasks, many=True)
         return Response({"divisions": serializer.data})
+
 
 # noinspection PyMethodMayBeStatic
 class EmployeeView(APIView):
@@ -303,6 +313,7 @@ class SystemView(APIView):
         return Response({
             "message": "System with id `{}` has been deleted.".format(pk)
         }, status=204)
+
 
 class SystemGroupView(APIView):
     authentication_classes = [SessionAuthentication, BasicAuthentication]

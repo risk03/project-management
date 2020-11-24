@@ -39,7 +39,7 @@ class TaskSequence(models.Model):
 
 
 class StructureComponent(models.Model):
-    parent = models.ForeignKey("Division", null=True, blank=True, on_delete=models.CASCADE, related_name="child")
+    parent = models.ForeignKey("Division", null=True, blank=True, on_delete=models.SET_NULL, related_name="child")
 
 
 class Division(StructureComponent):
@@ -52,7 +52,7 @@ class Division(StructureComponent):
 class Employee(StructureComponent):
     full_name = models.CharField(max_length=255, null=False)
     short_name = models.CharField(max_length=255, null=True)
-    position = models.ForeignKey("Position", null=False, blank=False, on_delete=models.CASCADE)
+    position = models.ForeignKey("Position", null=True, blank=True, on_delete=models.SET_NULL)
     login = models.CharField(max_length=32, null=True, unique=True)
     salt = models.CharField(max_length=32, null=True)
     hash = models.CharField(max_length=32, null=True)

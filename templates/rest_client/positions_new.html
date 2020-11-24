@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,7 +20,10 @@
                 <a class="nav-link" href="/client/tasks/">Проекты</a>
             </li>
             <li class="nav-item active">
-                <a class="nav-link" href="/client/structures/">Сотрудники<span class="sr-only">(current)</span></a>
+                <a class="nav-link" href="/client/structures/">Структура<span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/client/employees/">Сотрудники</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="/client/systems/">Системы</a>
@@ -28,18 +32,19 @@
                 <a class="nav-link" href="/client/positions/">Должности</a>
             </li>
         </ul>
+        <a class="nav-link text-light" href="/client/myaccount/">Мой аккаунт</a>
         <a class="nav-link text-light" href="/client/logout/">Выход</a>
     </div>
 </nav>
-<form class="form-signin">
-    <h1 class="h2 mb-4 font-">АСУП</h1>
-    <h1 class="h3 mb-3 font-weight-normal">Вход</h1>
-    <span class="text-danger">{% if failed %}Неверный логин или пароль{% else %} {% endif %}</span>
-    <label for="inputLogin" class="sr-only">Логин</label>
-    <input type="text" id="inputLogin" name="login" class="form-control" placeholder="Логин" required="" autofocus="">
-    <label for="inputPassword" class="sr-only">Пароль</label>
-    <input type="password" id="inputPassword" name="password" class="form-control" placeholder="Пароль" required="">
-    <button class="btn btn-lg btn-primary btn-block" type="submit">Войти</button>
-</form>
+<main role="main" class="container-fluid" style="padding-top: 4.5rem">
+    <a class="btn btn-primary" href="/client/positions/">Назад</a>
+    <form>
+        <div class="form-group">
+            <label for="inputname">Наименование</label>
+            <input class="form-control input-lg" id="inputname" type="text" name="name" value="{{ name }}">
+        </div>
+        <button type="submit" name="add" class="btn btn-primary">Добавить</button>
+    </form>
+</main>
 </body>
 </html>

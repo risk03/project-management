@@ -15,37 +15,35 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarCollapse">
         <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-                <a class="nav-link" href="/client/tasks/">Проекты<span class="sr-only">(current)</span></a>
-            </li>
-            <li class="nav-item active">
-                <a class="nav-link" href="/client/structures/">Сотрудники</a>
+            <li class="nav-item">
+                <a class="nav-link" href="/client/tasks/">Проекты</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/client/systems/">Системы</a>
+                <a class="nav-link" href="/client/structures/">Структура</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/client/employees/">Сотрудники</a>
+            </li>
+            <li class="nav-item active">
+                <a class="nav-link" href="/client/systems/">Системы<span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="/client/positions/">Должности</a>
             </li>
         </ul>
+        <a class="nav-link text-light" href="/client/myaccount/">Мой аккаунт</a>
         <a class="nav-link text-light" href="/client/logout/">Выход</a>
     </div>
 </nav>
-<form>
-    <label>
-        <input type="hidden" name="parent" value={{parent}}>
-    </label>
-    <label>
-        <input type="text" name="name" required placeholder="Название">
-    </label>
-    <label>
-        <select name="responsible">
-            {% for i in employees %}
-                <option value="{{ i.id }}">{{ i.short_name }}</option>
-            {% endfor %}
-        </select>
-    </label>
-    <button type="submit" name="add" value="true">Добавить</button>
-</form>
+<main role="main" class="container-fluid" style="padding-top: 4.5rem">
+    <a class="btn btn-primary" href="/client/systems/{{ parent }}">Назад</a>
+    <form>
+        <div class="form-group">
+            <label for="inputname">Наименование</label>
+            <input class="form-control input-lg" id="inputname" type="text" name="name" value="{{ name }}">
+        </div>
+        <button type="submit" name="add" class="btn btn-primary">Добавить</button>
+    </form>
+</main>
 </body>
 </html>

@@ -19,7 +19,10 @@
                 <a class="nav-link" href="/client/tasks/">Проекты</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/client/structures/">Сотрудники</a>
+                <a class="nav-link" href="/client/structures/">Структура</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/client/employees/">Сотрудники</a>
             </li>
             <li class="nav-item active">
                 <a class="nav-link" href="/client/systems/">Системы<span class="sr-only">(current)</span></a>
@@ -28,15 +31,15 @@
                 <a class="nav-link" href="/client/positions/">Должности</a>
             </li>
         </ul>
+        <a class="nav-link text-light" href="/client/myaccount/">Мой аккаунт</a>
         <a class="nav-link text-light" href="/client/logout/">Выход</a>
     </div>
 </nav>
-
 <main role="main" class="container-fluid" style="padding-top: 4.5rem">
     <a class="btn btn-primary" href="/client/systems/{{ parent_id }}">Наверх</a>
     <form>
         <div class="form-group">
-            <label for="inputname">{% if is_group %}Наименование{% else %}Полное имя{% endif %}</label>
+            <label for="inputname">Название</label>
             <input class="form-control input-lg" id="inputname" type="text" name="name" value="{{ name }}">
         </div>
         {% if not is_group %}
@@ -73,9 +76,9 @@
             <tr>
                 <td colspan="4" class="text-center">
                     <div class="row justify-content-center">
-                        <div class="col-sm-2"><a href="/client/systems/add_group/{{ id }}">Новая группа подзадач</a>
+                        <div class="col-sm-2"><a href="/client/systems/add_group/{{ id }}">Новая группа подсистем</a>
                         </div>
-                        <div class="col-sm-2"><a href="/client/systems/add_leaf/{{ id }}">Новая подзадача</a></div>
+                        <div class="col-sm-2"><a href="/client/systems/add_leaf/{{ id }}">Новая подсистема</a></div>
                     </div>
             </tr>
             </tbody>

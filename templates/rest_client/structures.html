@@ -19,7 +19,10 @@
                 <a class="nav-link" href="/client/tasks/">Проекты</a>
             </li>
             <li class="nav-item active">
-                <a class="nav-link" href="/client/structures/">Сотрудники<span class="sr-only">(current)</span></a>
+                <a class="nav-link" href="/client/structures/">Структура<span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/client/employees/">Сотрудники</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="/client/systems/">Системы</a>
@@ -28,6 +31,7 @@
                 <a class="nav-link" href="/client/positions/">Должности</a>
             </li>
         </ul>
+        <a class="nav-link text-light" href="/client/myaccount/">Мой аккаунт</a>
         <a class="nav-link text-light" href="/client/logout/">Выход</a>
     </div>
 </nav>
@@ -49,15 +53,17 @@
                 <label for="inputposition">Должность</label>
                 <select class="form-control input-lg" id="inputposition" name="position">
                     {% for position in positions %}
-                        <option value="{{ position.name }}">{{ position.name }}</option>
+                        <option value="{{ position.id }}"
+                                {% if position.id == position_id %}selected{% endif %}>{{ position.name }}</option>
                     {% endfor %}
                 </select>
             </div>
             <div class="form-group">
-                <label for="inputposition">Подразделение</label>
-                <select class="form-control input-lg" id="inputposition" name="position">
+                <label for="inputparent">Подразделение</label>
+                <select class="form-control input-lg" id="inputparent" name="parent">
                     {% for parent in parents %}
-                        <option value="{{ parent.name }}">{{ parent.name }}</option>
+                        <option value="{{ parent.id }}"
+                                {% if parent_id == parent.id %}selected{% endif %}>{{ parent.name }}</option>
                     {% endfor %}
                 </select>
             </div>
@@ -99,9 +105,9 @@
             <tr>
                 <td colspan="4" class="text-center">
                     <div class="row justify-content-center">
-                        <div class="col-sm-2"><a href="/client/structures/add_group/{{ id }}">Новая группа подзадач</a>
+                        <div class="col-sm-2"><a href="/client/structures/add_group/{{ id }}">Новое подразделение</a>
                         </div>
-                        <div class="col-sm-2"><a href="/client/structures/add_leaf/{{ id }}">Новая подзадача</a></div>
+                        <div class="col-sm-2"><a href="/client/structures/add_leaf/{{ id }}">Новый сотрудник</a></div>
                     </div>
             </tr>
             </tbody>
