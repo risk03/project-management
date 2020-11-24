@@ -13,8 +13,10 @@ class TaskComponent(models.Model):
 
 
 class TaskLeaf(TaskComponent):
-    start = models.DateTimeField()
-    end = models.DateTimeField()
+    start = models.DateTimeField(null=True)
+    end = models.DateTimeField(null=True)
+    STATUS = (('NEW', 'New'), ('PRO', 'In progress'), ('COM', 'Completed'), ('REJ', 'Rejected'), ('REV', 'Send to revision'))
+    status = models.CharField(max_length=3, choices=STATUS)
 
 
 class Artefact(models.Model):
@@ -67,6 +69,7 @@ class Position(models.Model):
 
     def __str__(self):
         return self.name
+
 
 class SystemComponent(models.Model):
     name = models.CharField(max_length=255, null=False)

@@ -8,6 +8,7 @@ urlpatterns = [
     path('positions/', views.PositionView.as_view()),
     path('positions/<int:pk>/', views.PositionView.as_view()),
     path('tasks/', views.TaskView.as_view()),
+    path('taskgroups/', views.TaskGroupView.as_view()),
     path('tasks/<int:pk>/', views.TaskView.as_view()),
     path('systems/', views.SystemView.as_view()),
     path('systemgroups/', views.SystemGroupView.as_view()),

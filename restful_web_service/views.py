@@ -323,3 +323,10 @@ class SystemGroupView(APIView):
         systems = models.SystemGroup.objects.all()
         serializer = serializers.SystemComponentSerializer(systems, many=True)
         return Response({"systemgroups": serializer.data})
+
+
+class TaskGroupView(APIView):
+    def get(self, request):
+        groups = models.TaskGroup.objects.all()
+        serializer = serializers.TaskComponentSerializer(groups, many=True)
+        return Response({"taskgroups": serializer.data})

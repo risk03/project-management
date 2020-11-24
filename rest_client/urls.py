@@ -9,6 +9,7 @@ urlpatterns = [
     path('tasks/<int:pk>', views.tasks, name='tasks'),
     path('tasks/add_group/', views.add_tasks_group, name='task_add_group'),
     path('tasks/add_group/<int:pk>', views.add_tasks_group, name='task_add_group'),
+    path('tasks/add_leaf/<int:pk>', views.add_tasks_leaf, name='task_add_leaf'),
     path('structures/', views.structures_root, name='structures_root'),
     path('structures/<int:pk>', views.structures, name='structures'),
     path('structures/reset_password/<int:pk>', views.reset_password, name='reset_password'),

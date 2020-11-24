@@ -1,3 +1,4 @@
+import datetime
 import hashlib
 import random
 
@@ -61,18 +62,21 @@ def add_tasks_group(request, pk=None):
         rest(POST, 'tasks/', {
             "tasks": {
                 "name": request.GET['name'],
-                "parent": None if request.GET['parent'] == 'None' else request.GET['parent'],
+                "parent": pk,
                 "creator": user_id,
                 "responsible": request.GET['responsible']
             },
             "isgroup": True
         })
-        return redirect('/client/tasks/' + ("" if pk is None else pk))
+        return redirect('/client/tasks/' + ("" if pk is None else str(pk)))
     employees = rest(GET, 'employees/').json()['employees']
     employees_list = []
     for employee in employees:
         employees_list.append({'id': employee['id'], 'short_name': employee['short_name']})
-    return render(request, 'rest_client/tasks_new.html', {'employees': employees_list, 'parent': pk})
+    context = {'employees': employees_list}
+    if pk:
+        context['parent'] = pk
+    return render(request, 'rest_client/tasks_new.html', context)
 
 
 def tasks(request, pk):
@@ -92,9 +96,9 @@ def tasks(request, pk):
             "isgroup": True
         })
         return redirect('/client/tasks/' + str(pk))
-    formated = []
+    context = {}
     if 'child' in j:
-        is_group = True
+        tasks = []
         for i in j['child']:
             task = {'name': i['name'], 'id': i['id']}
             creator = rest(GET, 'structures/' + str(i['creator'])).json()['structures'][0]
@@ -103,18 +107,29 @@ def tasks(request, pk):
             responsible = rest(GET, 'structures/' + str(i['responsible'])).json()['structures'][0]
             task['responsible'] = responsible['short_name']
             task['responsible_id'] = responsible['id']
-            formated.append(task)
+            tasks.append(task)
             task['is_group'] = True if 'child' in i else False
+        context['tasks'] = tasks
+        context['is_group'] = True
     else:
-        is_group = False
-    employees = rest(GET, 'employees/').json()['employees']
-    employees_list = []
-    for employee in employees:
-        employees_list.append({'id': employee['id'], 'short_name': employee['short_name']})
-    return render(request, 'rest_client/tasks.html',
-                  {'tasks': formated, 'parent': ('' if j['parent'] is None else j['parent']),
-                   'employees': employees_list, 'name': j['name'], 'responsible': j['responsible'],
-                   'is_group': is_group, 'id': j['id']})
+        context['is_group'] = False
+        context['status'] = j['status']
+        context['start'] = datetime.datetime.strptime(j['start'], '%Y-%m-%dT%H:%M:%S.%fZ').replace(
+            microsecond=0).strftime('%Y-%m-%dT%H:%M')
+        context['end'] = datetime.datetime.strptime(j['end'], '%Y-%m-%dT%H:%M:%S.%fZ').replace(microsecond=0).strftime(
+            '%Y-%m-%dT%H:%M')
+    employees = []
+    for employee in rest(GET, 'employees/').json()['employees']:
+        employees.append({'id': employee['id'], 'short_name': employee['short_name']})
+    taskgroups = []
+    for taskgroup in rest(GET, 'taskgroups/').json()['taskgroups']:
+        taskgroups.append({'id': taskgroup['id'], 'name': taskgroup['name']})
+    context['taskgroups'] = taskgroups
+    context['employees'] = employees
+    context['name'] = j['name']
+    context['creator'] = rest(GET, 'structures/' + str(j['creator'])).json()['structures'][0]['short_name']
+    context['id'] = j['id']
+    return render(request, 'rest_client/tasks.html', context)
 
 
 def login(request):
@@ -163,18 +178,26 @@ def structures(request, pk=None):
         rest(DELETE, 'structures/' + str(pk))
         return redirect('/client/structures/' + ('' if j['parent'] is None else str(j['parent'])))
     if 'save' in request.GET:
-        rest(PUT, 'structures/' + str(pk) + '/', {
-            "structures": {
-                "full_name": request.GET['name'],
-                "short_name": request.GET['short_name'],
-                "login": request.GET['login'],
-                "isadmin": 'isadmin' in request.GET,
-                "parent": request.GET['parent'],
-                "position": request.GET['position']
-            },
-            "isgroup": 'child' in j
-        })
-        return redirect('/client/structures/' + str(pk))
+        if 'child' in j:
+            rest(PUT, 'structures/' + str(pk) + '/', {
+                "structures": {
+                    "name": request.GET['name'],
+                },
+                "isgroup": True
+            })
+        else:
+            rest(PUT, 'structures/' + str(pk) + '/', {
+                "structures": {
+                    "full_name": request.GET['name'],
+                    "short_name": request.GET['short_name'],
+                    "login": request.GET['login'],
+                    "isadmin": 'isadmin' in request.GET,
+                    "parent": request.GET['parent'],
+                    "position": request.GET['position']
+                },
+                "isgroup": False
+            })
+            return redirect('/client/structures/' + str(pk))
     if 'reset_password' in request.GET:
         return redirect('/client/structures/reset_password/' + str(pk))
     formated = []
@@ -391,3 +414,7 @@ def employees_root(request, pk=None):
             employee['position'] = rest(GET, 'positions/' + str(i['position'])).json()['positions'][0]['name']
         employees.append(employee)
     return render(request, 'rest_client/employees_root.html', {'employees': employees})
+
+
+def add_tasks_leaf(request, pk):
+    return render(request, 'rest_client/tasks_new.html', {'is_group': False})

@@ -35,21 +35,22 @@
         <a class="nav-link text-light" href="/client/logout/">Выход</a>
     </div>
 </nav>
-<form>
-    <label>
-        <input type="hidden" name="parent" value={{ parent }}>
-    </label>
-    <label>
-        <input type="text" name="name" required placeholder="Название">
-    </label>
-    <label>
-        <select name="responsible">
-            {% for i in employees %}
-                <option value="{{ i.id }}">{{ i.short_name }}</option>
-            {% endfor %}
-        </select>
-    </label>
-    <button type="submit" name="add" value="true">Добавить</button>
-</form>
-</body>
+<main role="main" class="container-fluid" style="padding-top: 4.5rem">
+    <a class="btn btn-primary" href="/client/tasks/{{ parent }}">Назад</a>
+    <form>
+        <div class="form-group">
+            <label for="inputname">Наименование</label>
+            <input class="form-control input-lg" id="inputname" type="text" name="name" value="{{ name }}">
+        </div>
+        <div class="form-group">
+            <label for="inputresponsible">Ответственный</label>
+            <select class="form-control input-lg" id="inputresponsible" name="responsible">
+                {% for employee in employees %}
+                    <option value="{{ employee.id }}">{{ employee.short_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" name="add" class="btn btn-primary">Добавить</button>
+    </form>
+</main>
 </html>
