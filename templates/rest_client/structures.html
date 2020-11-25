@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -31,27 +32,31 @@
                 <a class="nav-link" href="/client/positions/">Должности</a>
             </li>
         </ul>
-        <a class="nav-link text-light" href="/client/myaccount/">Мой аккаунт</a>
+        <a class="nav-link text-light" href="/client/structures/{{ userid }}">{{ username }}</a>
         <a class="nav-link text-light" href="/client/logout/">Выход</a>
     </div>
 </nav>
-
 <main role="main" class="container-fluid" style="padding-top: 4.5rem">
     <a class="btn btn-primary" href="/client/structures/{{ parent_id }}">Наверх</a>
     <form>
         <div class="form-group">
             <label for="inputname">{% if is_group %}Наименование{% else %}Полное имя{% endif %}</label>
-            <input class="form-control input-lg" id="inputname" type="text" name="name" value="{{ name }}">
+            <input {% if not adminmode and pk != userid %}disabled{% endif %} class="form-control input-lg"
+                   id="inputname" type="text"
+                   name="name" value="{{ name }}">
         </div>
         {% if not is_group %}
             <div class="form-group">
                 <label for="inputshortname">Короткое имя</label>
-                <input class="form-control input-lg" id="inputshortname" type="text" name="short_name"
+                <input {% if not adminmode and pk != userid %}disabled{% endif %} class="form-control input-lg"
+                       id="inputshortname"
+                       type="text" name="short_name"
                        value="{{ short_name }}">
             </div>
             <div class="form-group">
                 <label for="inputposition">Должность</label>
-                <select class="form-control input-lg" id="inputposition" name="position">
+                <select {% if not adminmode %}disabled{% endif %} class="form-control input-lg" id="inputposition"
+                        name="position">
                     {% for position in positions %}
                         <option value="{{ position.id }}"
                                 {% if position.id == position_id %}selected{% endif %}>{{ position.name }}</option>
@@ -60,7 +65,8 @@
             </div>
             <div class="form-group">
                 <label for="inputparent">Подразделение</label>
-                <select class="form-control input-lg" id="inputparent" name="parent">
+                <select {% if not adminmode %}disabled{% endif %} class="form-control input-lg" id="inputparent"
+                        name="parent">
                     {% for parent in parents %}
                         <option value="{{ parent.id }}"
                                 {% if parent_id == parent.id %}selected{% endif %}>{{ parent.name }}</option>
@@ -69,20 +75,26 @@
             </div>
             <div class="form-group">
                 <label for="inputisadmin">Администратор</label>
-                <input class="form-control" id="inputisadmin" type="checkbox" name="isadmin" {% if is_admin %}
+                <input {% if not adminmode %}disabled{% endif %} class="form-control" id="inputisadmin" type="checkbox"
+                       name="isadmin" {% if is_admin %}
                        checked{% endif %}>
             </div>
             <div class="form-group">
                 <label for="inputlogin">Логин</label>
-                <input class="form-control" id="inputlogin" type="text" name="login" value={{ login }}>
+                <input {% if not adminmode and pk != userid %}disabled{% endif %} class="form-control" id="inputlogin"
+                       type="text"
+                       name="login" value={{ login }}>
             </div>
-
         {% endif %}
-        <button type="submit" name="save" class="btn btn-primary">Сохранить</button>
-        {% if not is_group %}
-            <button type="submit" name="reset_password" class="btn btn-warning">Сбросить пароль</button>
+        {% if adminmode or userid == pk %}
+            <button type="submit" name="save" class="btn btn-primary">Сохранить</button>
+            {% if not is_group %}
+                <button type="submit" name="reset_password" class="btn btn-warning">Сбросить пароль</button>
+            {% endif %}
         {% endif %}
-        <button type="submit" name="delete" class="btn btn-danger">Удалить</button>
+        {% if adminmode and pk != userid %}
+            <button type="submit" name="delete" class="btn btn-danger">Удалить</button>
+        {% endif %}
     </form>
     {% if is_group %}
         <h1 class="h1">Подразделения</h1>
@@ -102,14 +114,48 @@
                     </td>
                 </tr>
             {% endfor %}
-            <tr>
-                <td colspan="4" class="text-center">
-                    <div class="row justify-content-center">
-                        <div class="col-sm-2"><a href="/client/structures/add_group/{{ id }}">Новое подразделение</a>
+            {% if adminmode %}
+                <tr>
+                    <td colspan="4" class="text-center">
+                        <div class="row justify-content-center">
+                            <div class="col-sm-2"><a href="/client/structures/add_group/{{ id }}">Новое
+                                подразделение</a>
+                            </div>
+                            <div class="col-sm-2"><a href="/client/structures/add_leaf/{{ id }}">Новый сотрудник</a>
+                            </div>
                         </div>
-                        <div class="col-sm-2"><a href="/client/structures/add_leaf/{{ id }}">Новый сотрудник</a></div>
-                    </div>
+                </tr>
+            {% endif %}
+            </tbody>
+        </table>
+    {% else %}
+        <h1 class="h1">Задания</h1>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Название</th>
+                <th scope="col">Создатель</th>
+                <th scope="col">Дата начала</th>
+                <th scope="col">Статус</th>
             </tr>
+            </thead>
+            <tbody>
+            {% for task in tasks %}
+                <tr>
+                    <th scope="row">{{ task.id }}</th>
+                    <td><a href="/client/tasks/{{ task.id }}">{{ task.name }}</a></td>
+                    <td><a href="/client/structures/{{ task.creator_id }}">{{ task.creator }}</a></td>
+                    <td>{{ task.start }}</td>
+                    <td>{% if task.status == 'NEW' %}<span style="color: orange; font-weight: bold">Новая</span>
+                    {% elif task.status == 'PRO' %}<span style="color: green; font-weight: bold">Выполняется</span>
+                    {% elif task.status == 'COM' %}<span style="color: blue; font-weight: bold">Завершена</span>
+                    {% elif task.status == 'REJ' %}<span style="color: gray; font-weight: bold">Отклонена</span>
+                    {% elif task.status == 'REV' %}
+                        <span style="color: orange; font-weight: bold">Требуется доработка</span>
+                    {% endif %}</td>
+                </tr>
+            {% endfor %}
             </tbody>
         </table>
     {% endif %}

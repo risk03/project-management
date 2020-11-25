@@ -31,7 +31,7 @@
                 <a class="nav-link" href="/client/positions/">Должности</a>
             </li>
         </ul>
-        <a class="nav-link text-light" href="/client/myaccount/">Мой аккаунт</a>
+        <a class="nav-link text-light" href="/client/structures/{{ userid }}">{{ username }}</a>
         <a class="nav-link text-light" href="/client/logout/">Выход</a>
     </div>
 </nav>
@@ -50,9 +50,11 @@
                 <td><a href="/client/systems/{{ system.id }}"> {{ system.name }}</a></td>
             </tr>
         {% endfor %}
+        {% if adminmode %}
         <tr>
             <td colspan="4" class="text-center"><a href="/client/systems/add_group/">Новая система</a></td>
         </tr>
+        {% endif %}
         </tbody>
     </table>
 </main>

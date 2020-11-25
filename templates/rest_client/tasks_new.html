@@ -18,7 +18,7 @@
             <li class="nav-item active">
                 <a class="nav-link" href="/client/tasks/">Проекты<span class="sr-only">(current)</span></a>
             </li>
-            <li class="nav-item active">
+            <li class="nav-item">
                 <a class="nav-link" href="/client/structures/">Структура</a>
             </li>
             <li class="nav-item">
@@ -31,7 +31,7 @@
                 <a class="nav-link" href="/client/positions/">Должности</a>
             </li>
         </ul>
-        <a class="nav-link text-light" href="/client/myaccount/">Мой аккаунт</a>
+        <a class="nav-link text-light" href="/client/structures/{{ userid }}">{{ username }}</a>
         <a class="nav-link text-light" href="/client/logout/">Выход</a>
     </div>
 </nav>
@@ -39,17 +39,59 @@
     <a class="btn btn-primary" href="/client/tasks/{{ parent }}">Назад</a>
     <form>
         <div class="form-group">
-            <label for="inputname">Наименование</label>
+            <label for="inputname">Название</label>
             <input class="form-control input-lg" id="inputname" type="text" name="name" value="{{ name }}">
         </div>
+        {% if not is_group %}
+            <div class="form-group">
+                <label for="inputparent">Надзадача</label>
+                <select class="form-control input-lg" id="inputparent" name="parent">
+                    {% for taskgroup in taskgroups %}
+                        <option value="{{ taskgroup.id }}"
+                                {% if taskgroup.id == parent %}selected{% endif %}>{{ taskgroup.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        {% endif %}
         <div class="form-group">
             <label for="inputresponsible">Ответственный</label>
             <select class="form-control input-lg" id="inputresponsible" name="responsible">
                 {% for employee in employees %}
-                    <option value="{{ employee.id }}">{{ employee.short_name }}</option>
+                    <option value="{{ employee.id }}"
+                            {% if employee.id == responsible_id %}selected{% endif %}>{{ employee.short_name }}</option>
                 {% endfor %}
             </select>
         </div>
+        <div class="form-group">
+            <label for="inputsystem">Объект</label>
+            <select class="form-control input-lg" id="inputsystem" name="system">
+                {% for system in systems %}
+                    <option value="{{ system.id }}"
+                            {% if system.id == system_id %}selected{% endif %}>{{ system.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        {% if not is_group %}
+            <div class="form-group">
+                <label for="inputstart">Статус</label>
+                <select class="form-control input-lg" id="inputstart" name="status">
+                    <option value="NEW" {% if status == 'NEW' %}selected{% endif %}>Новая</option>
+                    <option value="PRO" {% if status == 'PRO' %}selected{% endif %}>Выполняется</option>
+                    <option value="COM" {% if status == 'COM' %}selected{% endif %}>Завершена</option>
+                    <option value="REJ" {% if status == 'REJ' %}selected{% endif %}>Отклонена</option>
+                    <option value="REV" {% if status == 'REV' %}selected{% endif %}>Требуется доработка</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="inputstart">Начало</label>
+                <input class="form-control input-lg" id="inputstart" type="datetime-local" name="start"
+                       value="{{ start }}">
+            </div>
+            <div class="form-group">
+                <label for="inputend">Конец</label>
+                <input class="form-control input-lg" id="inputend" type="datetime-local" name="end" value="{{ end }}">
+            </div>
+        {% endif %}
         <button type="submit" name="add" class="btn btn-primary">Добавить</button>
     </form>
 </main>

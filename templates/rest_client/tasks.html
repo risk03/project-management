@@ -31,45 +31,61 @@
                 <a class="nav-link" href="/client/positions/">Должности</a>
             </li>
         </ul>
-        <a class="nav-link text-light" href="/client/myaccount/">Мой аккаунт</a>
+        <a class="nav-link text-light" href="/client/structures/{{ userid }}">{{ username }}</a>
         <a class="nav-link text-light" href="/client/logout/">Выход</a>
     </div>
 </nav>
-
 <main role="main" class="container-fluid" style="padding-top: 4.5rem">
     <a class="btn btn-primary" href="/client/tasks/{{ parent }}">Наверх</a>
+    <a class="btn btn-primary" href="/client/task_details/{{ id }}">Подробно</a>
     <form>
         <div class="form-group">
             <label for="inputname">Название</label>
-            <input class="form-control input-lg" id="inputname" type="text" name="name" value="{{ name }}">
+            <input {% if not usermode and userid != creator_id %}disabled{% endif %}
+                   class="form-control input-lg" id="inputname" type="text" name="name" value="{{ name }}">
         </div>
         {% if not is_group %}
             <div class="form-group">
-                <label for="inputposition">Надзадача</label>
-                <select class="form-control input-lg" id="inputposition" name="position">
+                <label for="inpurparent">Надзадача</label>
+                <select {% if not usermode and userid and userid != creator_id %}disabled{% endif %}
+                        class="form-control input-lg" id="inpurparent" name="parent">
                     {% for taskgroup in taskgroups %}
-                        <option value="{{ taskgroup.id }}" {% if taskgroup.id == parent %}selected{% endif %}>{{ taskgroup.name }}</option>
+                        <option value="{{ taskgroup.id }}"
+                                {% if taskgroup.id == parent %}selected{% endif %}>{{ taskgroup.name }}</option>
                     {% endfor %}
                 </select>
             </div>
         {% endif %}
         <div class="form-group">
-            <label for="inputposition">Ответственный</label>
-            <select class="form-control input-lg" id="inputposition" name="responsible">
+            <label for="inputresponsible"><a href="/client/stryctures/{{ responsible_id }}">Ответственный</a></label>
+            <select {% if not usermode and userid and userid != creator_id %}disabled{% endif %}
+                    class="form-control input-lg" id="inputresponsible" name="responsible">
                 {% for employee in employees %}
                     <option value="{{ employee.id }}"
-                            {% if employee.id == position_id %}selected{% endif %}>{{ employee.short_name }}</option>
+                            {% if employee.id == responsible_id %}selected{% endif %}>{{ employee.short_name }}</option>
                 {% endfor %}
             </select>
         </div>
+        {% if not is_group %}
+            <div class="form-group">
+                <label for="inputsystem"><a href="/client/systems/{{ system_id }}">Система</a></label>
+                <select {% if not usermode and userid != creator_id %}disabled{% endif %}
+                        class="form-control input-lg" id="inputsystem" name="system">
+                    {% for system in systems %}
+                        <option value="{{ system.id }}"
+                                {% if system.id == system_id %}selected{% endif %}>{{ system.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        {% endif %}
         <div class="form-group">
-            <label for="inputcreator">Создатель</label>
-            <span class="form-control input-lg" id="inputcreator">{{ creator }}</span>
+            <label for="inputcreator"><a href="/client/structures/{{ creator_id }}">Создатель</a></label>
+            <input disabled class="form-control input-lg" id="inputcreator" type="text" value="{{ creator }}">
         </div>
         {% if not is_group %}
             <div class="form-group">
                 <label for="inputstart">Статус</label>
-                <select class="form-control input-lg" id="inputstart" name="start">
+                <select {% if not usermode and userid != responsible_id and userid != creator_id %}disabled{% endif %} class="form-control input-lg" id="inputstart" name="status">
                     <option value="NEW" {% if status == 'NEW' %}selected{% endif %}>Новая</option>
                     <option value="PRO" {% if status == 'PRO' %}selected{% endif %}>Выполняется</option>
                     <option value="COM" {% if status == 'COM' %}selected{% endif %}>Завершена</option>
@@ -79,18 +95,19 @@
             </div>
             <div class="form-group">
                 <label for="inputstart">Начало</label>
-                <input class="form-control input-lg" id="inputstart" type="datetime-local" name="start"
+                <input {% if not usermode and userid != creator_id %}disabled{% endif %} class="form-control input-lg" id="inputstart" type="datetime-local" name="start"
                        value="{{ start }}">
             </div>
             <div class="form-group">
                 <label for="inputend">Конец</label>
-                <input class="form-control input-lg" id="inputend" type="datetime-local" name="end" value="{{ end }}">
+                <input {% if not usermode and userid != responsible_id and userid != creator_id %}disabled{% endif %} class="form-control input-lg" id="inputend" type="datetime-local" name="end" value="{{ end }}">
             </div>
         {% endif %}
-        <button type="submit" name="save" class="btn btn-primary">Сохранить</button>
-        <button type="submit" name="delete" class="btn btn-danger">Удалить</button>
+        {% if usermode or userid == creator_id %}
+            <button type="submit" name="save" class="btn btn-primary">Сохранить</button>
+            <button type="submit" name="delete" class="btn btn-danger">Удалить</button>
+        {% endif %}
     </form>
-
     {% if is_group %}
         <h1 class="h1">Подзадачи</h1>
         <table class="table table-striped">

@@ -31,7 +31,7 @@
                 <a class="nav-link" href="/client/positions/">Должности<span class="sr-only">(current)</span></a>
             </li>
         </ul>
-        <a class="nav-link text-light" href="/client/myaccount/">Мой аккаунт</a>
+        <a class="nav-link text-light" href="/client/structures/{{ userid }}">{{ username }}</a>
         <a class="nav-link text-light" href="/client/logout/">Выход</a>
     </div>
 </nav>
@@ -50,9 +50,11 @@
                 <td><a href="/client/positions/{{ position.id }}"> {{ position.name }}</a></td>
             </tr>
         {% endfor %}
+        {% if adminmode %}
         <tr>
             <td colspan="4" class="text-center"><a href="/client/positions/add/">Новая должность</a></td>
         </tr>
+        {% endif %}
         </tbody>
     </table>
 </main>

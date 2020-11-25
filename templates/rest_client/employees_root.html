@@ -31,7 +31,7 @@
                 <a class="nav-link" href="/client/positions/">Должности</a>
             </li>
         </ul>
-        <a class="nav-link text-light" href="/client/myaccount/">Мой аккаунт</a>
+        <a class="nav-link text-light" href="/client/structures/{{ userid }}">{{ username }}</a>
         <a class="nav-link text-light" href="/client/logout/">Выход</a>
     </div>
 </nav>
@@ -43,6 +43,7 @@
             <th scope="col">Полное имя</th>
             <th scope="col">Подразделение</th>
             <th scope="col">Должность</th>
+            <th scope="col">Администратор</th>
         </tr>
         </thead>
         <tbody>
@@ -52,11 +53,14 @@
                 <td><a href="/client/structures/{{ employee.id }}"> {{ employee.name }}</a></td>
                 <td><a href="/client/structures/{{ employee.division_id }}"> {{ employee.division }}</a></td>
                 <td><a href="/client/positions/{{ employee.position_id }}"> {{ employee.position }}</a></td>
+                <td>{% if employee.admin %}Да{% else %}Нет{% endif %}</td>
             </tr>
         {% endfor %}
+        {% if adminmode %}
         <tr>
             <td colspan="4" class="text-center"><a href="/client/structures/add_leaf/">Новый сотрудник</a></td>
         </tr>
+        {% endif %}
         </tbody>
     </table>
 </main>

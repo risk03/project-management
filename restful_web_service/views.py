@@ -64,6 +64,27 @@ class PositionView(APIView):
 
 
 # noinspection PyMethodMayBeStatic
+class TaskOfStructView(APIView):
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, pk):
+        tasks = models.TaskLeaf.objects.filter(responsible=pk)
+        serializer = serializers.TaskComponentSerializer(tasks, many=True)
+        return Response({"tasks": serializer.data})  # noinspection PyMethodMayBeStatic
+
+
+class TaskOfSysView(APIView):
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, pk):
+        tasks = models.TaskLeaf.objects.filter(system=pk)
+        serializer = serializers.TaskComponentSerializer(tasks, many=True)
+        return Response({"tasks": serializer.data})
+
+
+# noinspection PyMethodMayBeStatic
 class TaskView(APIView):
     authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [IsAuthenticated]
@@ -266,6 +287,17 @@ class ArtefactView(APIView):
         return Response({
             "message": "Artefact with id `{}` has been deleted.".format(pk)
         }, status=204)
+
+
+# noinspection PyMethodMayBeStatic
+class SystempartsView(APIView):
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        systems = models.SystemComponent.objects.all()
+        serializer = serializers.SystemComponentSerializer(systems, many=True)
+        return Response({"systemparts": serializer.data})
 
 
 # noinspection PyMethodMayBeStatic

@@ -7,6 +7,7 @@ class TaskComponent(models.Model):
     name = models.CharField(max_length=255, null=False)
     creator = models.ForeignKey("Employee", null=False, on_delete=models.CASCADE, related_name='creation')
     responsible = models.ForeignKey("Employee", null=False, on_delete=models.CASCADE, related_name='resonsibility')
+    system = models.ForeignKey("SystemComponent", null=True, related_name='task', on_delete=models.SET_NULL)
 
     def __str__(self):
         return self.name
