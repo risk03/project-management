@@ -70,7 +70,7 @@
     <h1>{{ name }}</h1>
     <h2>Состояние подзадач</h2>
     {% for task in tasks %}
-        Подзадача №{{ task.id }} "{{ task.name }}" -
+        <a href="/client/tasks/{{ task.id }}">Подзадача №{{ task.id }} "{{ task.name }}"</a> -
         {% if task.status == 'NEW' %}<span style="color: orange; font-weight: bold">Новая</span>
         {% elif task.status == 'PRO' %}<span style="color: green; font-weight: bold">Выполняется</span>
         {% elif task.status == 'COM' %}<span style="color: blue; font-weight: bold">Завершена</span>

@@ -85,7 +85,8 @@
         {% if not is_group %}
             <div class="form-group">
                 <label for="inputstart">Статус</label>
-                <select {% if not usermode and userid != responsible_id and userid != creator_id %}disabled{% endif %} class="form-control input-lg" id="inputstart" name="status">
+                <select {% if not usermode and userid != responsible_id and userid != creator_id %}disabled{% endif %}
+                        class="form-control input-lg" id="inputstart" name="status">
                     <option value="NEW" {% if status == 'NEW' %}selected{% endif %}>Новая</option>
                     <option value="PRO" {% if status == 'PRO' %}selected{% endif %}>Выполняется</option>
                     <option value="COM" {% if status == 'COM' %}selected{% endif %}>Завершена</option>
@@ -95,12 +96,14 @@
             </div>
             <div class="form-group">
                 <label for="inputstart">Начало</label>
-                <input {% if not usermode and userid != creator_id %}disabled{% endif %} class="form-control input-lg" id="inputstart" type="datetime-local" name="start"
+                <input {% if not usermode and userid != creator_id %}disabled{% endif %} class="form-control input-lg"
+                       id="inputstart" type="datetime-local" name="start"
                        value="{{ start }}">
             </div>
             <div class="form-group">
                 <label for="inputend">Конец</label>
-                <input {% if not usermode and userid != responsible_id and userid != creator_id %}disabled{% endif %} class="form-control input-lg" id="inputend" type="datetime-local" name="end" value="{{ end }}">
+                <input {% if not usermode and userid != responsible_id and userid != creator_id %}disabled{% endif %}
+                       class="form-control input-lg" id="inputend" type="datetime-local" name="end" value="{{ end }}">
             </div>
         {% endif %}
         {% if usermode or userid == creator_id %}
@@ -130,12 +133,38 @@
                 </tr>
             {% endfor %}
             <tr>
-                <td colspan="4" class="text-center">
+                {% if creator_id == userid or responsible_id == userid %}
+                    <td colspan="4" class="text-center">
                     <div class="row justify-content-center">
                         <div class="col-sm-2"><a href="/client/tasks/add_group/{{ id }}">Новая группа подзадач</a></div>
                         <div class="col-sm-2"><a href="/client/tasks/add_leaf/{{ id }}">Новая подзадача</a></div>
                     </div>
+                {% endif %}
             </tr>
+            </tbody>
+        </table>
+    {% else %}
+        <h1 class="h1">Артефакты</h1>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Название</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for artefact in artefacts %}
+                <tr>
+                    <th scope="row">{{ artefact.id }}</th>
+                    <td><a href="/client/artefacts/{{ artefact.id }}">{{ artefact.title }}</a></td>
+                </tr>
+            {% endfor %}
+            {% if creator_id == userid or responsible_id == userid %}
+                <tr>
+                    <td colspan="2" class="text-center"><a href="/client/artefacts/add/{{ id }}">Новый артефакт</a>
+                    </td>
+                </tr>
+            {% endif %}
             </tbody>
         </table>
     {% endif %}

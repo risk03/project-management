@@ -252,6 +252,17 @@ class EmployeeView(APIView):
 
 
 # noinspection PyMethodMayBeStatic
+class ArtefactOfView(APIView):
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, pk):
+        artefact = models.Artefact.objects.filter(task=pk)
+        serializer = serializers.ArtefactSerializer(artefact, many=True)
+        return Response({"artefacts": serializer.data})
+
+
+# noinspection PyMethodMayBeStatic
 class ArtefactView(APIView):
     authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [IsAuthenticated]
@@ -269,7 +280,7 @@ class ArtefactView(APIView):
         serializer = serializers.ArtefactSerializer(data=artefacts)
         if serializer.is_valid(raise_exception=True):
             artefacts = serializer.save()
-        return Response({"success": "Artefact '{}' created successfully".format(artefacts.name)})
+        return Response({"success": "Artefact '{}' created successfully".format(artefacts.title)})
 
     def put(self, request, pk):
         artefacts = get_object_or_404(models.Artefact.objects.all(), pk=pk)

@@ -23,5 +23,7 @@ urlpatterns = [
     path('systems/add_group/<int:pk>', views.add_system_group, name='add_system'),
     path('systems/add_leaf/<int:pk>', views.add_system_leaf, name='add_system_leaf'),
     path('login/', views.login, name='login'),
-    path('logout/', views.logout, name='logout')
+    path('logout/', views.logout, name='logout'),
+    path('artefacts/<int:pk>', views.artefact, name='artefact'),
+    path('artefacts/add/<int:pk>', views.artefact_add, name='artefact')
 ]

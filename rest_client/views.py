@@ -133,6 +133,10 @@ def tasks(request, pk):
             systems.append({'id': system['id'], 'name': system['name']})
         context['systems'] = systems
         context['system_id'] = j['system']
+        artefacts = []
+        for i in rest(GET, 'artefacts/of/' + str(pk)).json()['artefacts']:
+            artefacts.append({'id': i['id'], 'title': i['title']})
+        context['artefacts'] = artefacts
     employees = []
     for employee in rest(GET, 'employees/').json()['employees']:
         employees.append({'id': employee['id'], 'short_name': employee['short_name']})
@@ -146,7 +150,8 @@ def tasks(request, pk):
     context['creator'] = rest(GET, 'structures/' + str(j['creator'])).json()['structures'][0]['short_name']
     context['id'] = j['id']
     context['responsible_id'] = j['responsible']
-    context['parent'] = j['parent']
+    if j['parent']:
+        context['parent'] = j['parent']
     context['userid'] = userid
     context['username'] = rest(GET, 'structures/' + str(userid)).json()['structures'][0]['short_name']
     return render(request, 'rest_client/tasks.html', context)
@@ -389,7 +394,8 @@ def systems(request, pk=None):
             tasks.append({'id': i['id'], 'name': i['name'], 'creator_id': i['creator'], 'status': i['status'],
                           'creator': rest(GET, 'structures/' + str(i['creator'])).json()['structures'][0]['short_name'],
                           'responsible_id': i['responsible'],
-                          'responsible': rest(GET, 'structures/' + str(i['responsible'])).json()['structures'][0]['short_name'],
+                          'responsible': rest(GET, 'structures/' + str(i['responsible'])).json()['structures'][0][
+                              'short_name'],
                           'start': datetime.datetime.strptime(i['start'], '%Y-%m-%dT%H:%M:%SZ')})
         context['tasks'] = sorted(tasks, key=lambda x: x['start'], reverse=True)
         for i in context['tasks']:
@@ -574,3 +580,43 @@ def task_details(request, pk):
     context['userid'] = userid
     context['username'] = rest(GET, 'structures/' + str(userid)).json()['structures'][0]['short_name']
     return render(request, 'rest_client/task_detail.html', context)
+
+
+def artefact(request, pk):
+    userid = check_login(request.session)
+    if not userid:
+        return redirect('login')
+    j = rest(GET, 'artefacts/' + str(pk)).json()['artefacts'][0]
+    if 'save' in request.GET:
+        rest(PUT, 'artefacts/' + str(pk) + '/', {'artefacts': {"title": request.GET['title'],
+                                                               "description": request.GET['description']}})
+        return redirect('/client/artefacts/' + str(pk))
+    if 'delete' in request.GET:
+        rest(DELETE, 'artefacts/' + str(pk))
+        return redirect('/client/tasks/' + str(j['task']))
+    context = {}
+    context['title'] = j['title']
+    context['description'] = j['description']
+    context['parent_id'] = j['task']
+    task = rest(GET, 'tasks/' + str(j['task'])).json()['tasks'][0]
+    context['responsible_id'] = task['responsible']
+    context['creator_id'] = task['creator']
+    context['pk'] = pk
+    context['userid'] = userid
+    context['username'] = rest(GET, 'structures/' + str(userid)).json()['structures'][0]['short_name']
+    return render(request, 'rest_client/artefact.html', context)
+
+
+def artefact_add(request, pk):
+    userid = check_login(request.session)
+    if not userid:
+        return redirect('login')
+    if 'add' in request.GET:
+        rest(POST, 'artefacts/',
+             {'artefacts': {'title': request.GET['title'], 'description': request.GET['description'], 'task': pk}})
+        return redirect('/client/tasks/'+ str(pk))
+    context = {}
+    context['pk'] = pk
+    context['userid'] = userid
+    context['username'] = rest(GET, 'structures/' + str(userid)).json()['structures'][0]['short_name']
+    return render(request, 'rest_client/artefact_new.html', context)

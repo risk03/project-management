@@ -20,6 +20,7 @@ urlpatterns = [
     path('structures/<int:pk>/', views.StructureView.as_view()),
     path('divisions/', views.DivisionView.as_view()),
     path('artefacts/', views.ArtefactView.as_view()),
+    path('artefacts/of/<int:pk>/', views.ArtefactOfView.as_view()),
     path('artefacts/<int:pk>/', views.ArtefactView.as_view()),
     path('sequences/', views.TaskSequenceView.as_view()),
     path('sequences/<int:pk>/', views.TaskSequenceView.as_view()),
