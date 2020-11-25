@@ -7,7 +7,6 @@ class TaskComponent(models.Model):
     name = models.CharField(max_length=255, null=False)
     creator = models.ForeignKey("Employee", null=False, on_delete=models.CASCADE, related_name='creation')
     responsible = models.ForeignKey("Employee", null=False, on_delete=models.CASCADE, related_name='resonsibility')
-    system = models.ForeignKey("SystemComponent", null=True, related_name='task', on_delete=models.SET_NULL)
 
     def __str__(self):
         return self.name
@@ -16,8 +15,10 @@ class TaskComponent(models.Model):
 class TaskLeaf(TaskComponent):
     start = models.DateTimeField(null=True)
     end = models.DateTimeField(null=True)
-    STATUS = (('NEW', 'New'), ('PRO', 'In progress'), ('COM', 'Completed'), ('REJ', 'Rejected'), ('REV', 'Send to revision'))
+    STATUS = (
+    ('NEW', 'New'), ('PRO', 'In progress'), ('COM', 'Completed'), ('REJ', 'Rejected'), ('REV', 'Send to revision'))
     status = models.CharField(max_length=3, choices=STATUS)
+    system = models.ForeignKey("SystemComponent", null=True, related_name='task', on_delete=models.SET_NULL)
 
 
 class Artefact(models.Model):
@@ -31,14 +32,6 @@ class Artefact(models.Model):
 
 class TaskGroup(TaskComponent):
     pass
-
-
-class TaskSequence(models.Model):
-    previous = models.ForeignKey("TaskLeaf", null=False, blank=False, on_delete=models.CASCADE, related_name='next')
-    next = models.ForeignKey("TaskLeaf", null=False, blank=False, on_delete=models.CASCADE, related_name='previous')
-
-    def __str__(self):
-        return self.previous.name + " -> " + self.next.name
 
 
 class StructureComponent(models.Model):

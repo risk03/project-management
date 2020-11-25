@@ -8,7 +8,6 @@ admin.site.register(models.SystemPart)
 
 admin.site.register(models.TaskGroup)
 admin.site.register(models.TaskLeaf)
-admin.site.register(models.TaskSequence)
 
 admin.site.register(models.Division)
 admin.site.register(models.Employee)

@@ -133,45 +133,6 @@ class TaskView(APIView):
         except Exception:
             pass
 
-
-# noinspection PyMethodMayBeStatic
-class TaskSequenceView(APIView):
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request, pk=None):
-        if pk is None:
-            sequences = models.TaskSequence.objects.all()
-        else:
-            sequences = models.TaskSequence.objects.filter(id=pk)
-        serializer = serializers.TaskSequenceSerializer(sequences, many=True)
-        return Response({"sequences": serializer.data})
-
-    def post(self, request, pk=None):
-        sequences = request.data.get('sequences')
-        serializer = serializers.TaskSequenceSerializer(data=sequences)
-        if serializer.is_valid(raise_exception=True):
-            sequences = serializer.save()
-        return Response({"success": "Sequence '{}' created successfully".format(sequences.name)})
-
-    def put(self, request, pk):
-        sequences = get_object_or_404(models.TaskSequence.objects.all(), pk=pk)
-        data = request.data.get('sequences')
-        serializer = serializers.TaskSequenceSerializer(instance=sequences, data=data, partial=True)
-        if serializer.is_valid(raise_exception=True):
-            saved = serializer.save()
-            return Response({
-                "success": "Sequence '{}' updated successfully".format(saved.name)
-            })
-
-    def delete(self, request, pk):
-        sequences = get_object_or_404(models.TaskSequence.objects.all(), pk=pk)
-        sequences.delete()
-        return Response({
-            "message": "Sequence with id `{}` has been deleted.".format(pk)
-        }, status=204)
-
-
 # noinspection PyMethodMayBeStatic
 class StructureView(APIView):
     authentication_classes = [SessionAuthentication, BasicAuthentication]

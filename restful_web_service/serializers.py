@@ -37,12 +37,6 @@ class TaskGroupSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class TaskSequenceSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.TaskSequence
-        fields = '__all__'
-
-
 class StructureComponentSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         if hasattr(instance, 'division'):
