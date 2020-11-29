@@ -66,7 +66,8 @@ def add_tasks_group(request, pk=None):
                 "name": request.GET['name'],
                 "parent": pk,
                 "creator": userid,
-                "responsible": request.GET['responsible']
+                "responsible": request.GET['responsible'],
+                "system": (request.GET['system'] if 'system' in request.GET else None)
             },
             "isgroup": True
         })
@@ -78,6 +79,11 @@ def add_tasks_group(request, pk=None):
     context = {'employees': employees_list}
     if pk:
         context['parent'] = pk
+    systems = []
+    for system in rest(GET, 'systemparts/').json()['systemparts']:
+        systems.append({'id': system['id'], 'name': system['name']})
+    context['is_group'] = True
+    context['systems'] = systems
     context['userid'] = userid
     context['username'] = rest(GET, 'structures/' + str(userid)).json()['structures'][0]['short_name']
     return render(request, 'rest_client/tasks_new.html', context)
@@ -93,16 +99,13 @@ def tasks(request, pk):
         rest(DELETE, 'tasks/' + str(pk))
         return redirect('/client/tasks/' + ('' if j['parent'] is None else str(j['parent'])))
     if 'save' in request.GET:
+        fields = ["name", "start", "end", "parent", "responsible", "system", "status"]
+        save = {}
+        for field in fields:
+            if field in request.GET:
+                save[field] = request.GET[field]
         rest(PUT, 'tasks/' + str(pk) + '/', {
-            "tasks": {
-                "name": request.GET['name'],
-                "start": request.GET['start'],
-                "end": request.GET['end'],
-                "parent": request.GET['parent'],
-                "responsible": request.GET['responsible'],
-                "system": request.GET['system'],
-                "status": request.GET['status']
-            },
+            "tasks": save,
             "isgroup": 'child' in j
         })
         return redirect('/client/tasks/' + str(pk))

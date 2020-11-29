@@ -42,7 +42,7 @@
             <label for="inputname">Название</label>
             <input class="form-control input-lg" id="inputname" type="text" name="name" value="{{ name }}">
         </div>
-        {% if not is_group %}
+        {% if not is_group and pk %}
             <div class="form-group">
                 <label for="inputparent">Надзадача</label>
                 <select class="form-control input-lg" id="inputparent" name="parent">

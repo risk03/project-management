@@ -79,7 +79,7 @@ WSGI_APPLICATION = 'project_management.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'project-management',
+        'NAME': 'pm_test',
         'USER': 'root',
         'PASSWORD': 'wasd',
         'HOST': '127.0.0.1',
