@@ -15,8 +15,7 @@ class TaskComponent(models.Model):
 class TaskLeaf(TaskComponent):
     start = models.DateTimeField(null=True)
     end = models.DateTimeField(null=True)
-    STATUS = (
-    ('NEW', 'New'), ('PRO', 'In progress'), ('COM', 'Completed'), ('REJ', 'Rejected'), ('REV', 'Send to revision'))
+    STATUS = (('NEW', 'New'), ('PRO', 'In progress'), ('COM', 'Completed'), ('REJ', 'Rejected'), ('REV', 'Send to revision'))
     status = models.CharField(max_length=3, choices=STATUS)
     system = models.ForeignKey("SystemComponent", null=True, related_name='task', on_delete=models.SET_NULL)
 
@@ -36,18 +35,15 @@ class TaskGroup(TaskComponent):
 
 class StructureComponent(models.Model):
     parent = models.ForeignKey("Division", null=True, blank=True, on_delete=models.SET_NULL, related_name="child")
-
-
-class Division(StructureComponent):
     name = models.CharField(max_length=255, null=False)
 
+class Division(StructureComponent):
     def __str__(self):
         return self.name
 
 
 class Employee(StructureComponent):
     full_name = models.CharField(max_length=255, null=False)
-    short_name = models.CharField(max_length=255, null=True)
     position = models.ForeignKey("Position", null=True, blank=True, on_delete=models.SET_NULL)
     login = models.CharField(max_length=32, null=True, unique=True)
     salt = models.CharField(max_length=32, null=True)

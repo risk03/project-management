@@ -25,7 +25,7 @@ SECRET_KEY = '#c!@ad@8t7iuu1i3r9rai(1mwd*44krt^m4tuwzn=h2r6js=0!'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["127.0.0.1"]
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 
 # Application definition
@@ -78,12 +78,8 @@ WSGI_APPLICATION = 'project_management.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'pm_test',
-        'USER': 'root',
-        'PASSWORD': 'wasd',
-        'HOST': '127.0.0.1',
-        'PORT': '3306',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'database.sqlite3',
     }
 }
 
