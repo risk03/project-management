@@ -22,6 +22,7 @@ from project_management import settings
 urlpatterns = [
     path('rest/', include('restful_web_service.urls')),
     path('client/', include('rest_client.urls')),
+    path('', include('rest_client.urls')),
     path('admin/', admin.site.urls),
 ]
 if settings.DEBUG:
