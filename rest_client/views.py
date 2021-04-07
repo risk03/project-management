@@ -127,10 +127,10 @@ def tasks(request, pk):
     else:
         context['is_group'] = False
         context['status'] = j['status']
-        context['start'] = datetime.datetime.strptime(j['start'], '%Y-%m-%dT%H:%M:%SZ').replace(
-            microsecond=0).strftime('%Y-%m-%dT%H:%M')
-        context['end'] = datetime.datetime.strptime(j['end'], '%Y-%m-%dT%H:%M:%SZ').replace(microsecond=0).strftime(
-            '%Y-%m-%dT%H:%M')
+        context['start'] = (datetime.datetime.strptime(j['start'], '%Y-%m-%dT%H:%M:%SZ').replace(
+            microsecond=0).strftime('%Y-%m-%dT%H:%M') if j['start'] else None)
+        context['end'] = (datetime.datetime.strptime(j['end'], '%Y-%m-%dT%H:%M:%SZ').replace(microsecond=0).strftime(
+            '%Y-%m-%dT%H:%M') if j['end'] else None)
         systems = []
         for system in rest(GET, 'systemparts/').json()['systemparts']:
             systems.append({'id': system['id'], 'name': system['name']})
@@ -269,9 +269,11 @@ def structures(request, pk=None):
         context['parents'] = parents
         tasks = []
         for i in rest(GET, 'tasks/of/struct/' + str(pk)).json()['tasks']:
+            print(i, type(i))
             tasks.append({'id': i['id'], 'name': i['name'], 'creator_id': i['creator'], 'status': i['status'],
                           'creator': rest(GET, 'structures/' + str(i['creator'])).json()['structures'][0]['short_name'],
-                          'start': datetime.datetime.strptime(i['start'], '%Y-%m-%dT%H:%M:%SZ')})
+                          'start': (datetime.datetime.strptime(i['start'], '%Y-%m-%dT%H:%M:%SZ') if i['start'] else datetime.datetime.now())
+                          })
         context['tasks'] = sorted(tasks, key=lambda x: x['start'], reverse=True)
         for i in context['tasks']:
             i['start'] = i['start'].strftime('%Y-%m-%dT%H:%M')

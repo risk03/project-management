@@ -9,8 +9,6 @@ class TaskComponentSerializer(serializers.ModelSerializer):
             return TaskGroupSerializer(instance=instance.taskgroup).data
         elif hasattr(instance, 'taskleaf'):
             return TaskLeafSerializer(instance=instance.taskleaf).data
-        else:
-            print(1)
 
     class Meta:
         model = models.TaskComponent
@@ -43,8 +41,6 @@ class StructureComponentSerializer(serializers.ModelSerializer):
             return DivisionSerializer(instance=instance.division).data
         elif hasattr(instance, 'employee'):
             return EmployeeSerializer(instance=instance.employee).data
-        else:
-            print(1)
 
     class Meta:
         model = models.StructureComponent
@@ -77,8 +73,6 @@ class SystemComponentSerializer(serializers.ModelSerializer):
             return SystemGroupSerializer(instance=instance.systemgroup).data
         elif hasattr(instance, 'systempart'):
             return SystemPartSerializer(instance=instance.systempart).data
-        else:
-            print(1)
 
     class Meta:
         model = models.SystemComponent

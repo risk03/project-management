@@ -334,3 +334,13 @@ class TaskGroupView(APIView):
         groups = models.TaskGroup.objects.all()
         serializer = serializers.TaskComponentSerializer(groups, many=True)
         return Response({"taskgroups": serializer.data})
+
+
+class PertView(APIView):
+    def get(self, request, pk=None):
+        if pk is None:
+            return Response({"error": "no pk"})
+        else:
+            task_group = models.TaskGroup.objects.get(id=pk)
+            task_group.get_time();
+            return Response({"ok": "ok!"})
