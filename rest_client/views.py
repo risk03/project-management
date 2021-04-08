@@ -110,6 +110,7 @@ def tasks(request, pk):
         })
         return redirect('/client/tasks/' + str(pk))
     context = {}
+    context['task']=j
     if 'child' in j:
         tasks = []
         for i in j['child']:
@@ -157,6 +158,8 @@ def tasks(request, pk):
         context['parent'] = j['parent']
     context['userid'] = userid
     context['username'] = rest(GET, 'structures/' + str(userid)).json()['structures'][0]['short_name']
+    for k in context:
+        print(context[k])
     return render(request, 'rest_client/tasks.html', context)
 
 
@@ -567,8 +570,17 @@ def get_child(task, l):
         for i in task['child']:
             get_child(i, l)
     else:
-        l.append({'id': task['id'], 'name': task['name'], 'start': task['start'], 'end': task['end'],
-                  'status': task['status']})
+        l.append(task)
+        if not task['start']:
+            l = [x for x in [task['real_early_start'], task['prop_early_start']] if x is not None]
+            task['start'] = max(l) if l else None
+        if not task['end']:
+            l = [x for x in [task['real_early_end'], task['prop_early_end']] if x is not None]
+            task['end'] = max(l) if l else None
+        task['prev'] = ','.join([str(x) for x in task['prev']])
+        task['reserve'] = datetime.datetime.strptime(task['tlj'], '%Y-%m-%dT%H:%M:%SZ').replace(
+            microsecond=0) - datetime.datetime.strptime(task['tej'], '%Y-%m-%dT%H:%M:%SZ').replace(
+            microsecond=0)
 
 
 def task_details(request, pk):
@@ -579,7 +591,9 @@ def task_details(request, pk):
     tasks = []
     r = rest(GET, 'tasks/' + str(pk)).json()['tasks'][0]
     get_child(r, tasks)
+    print(tasks)
     context['tasks'] = tasks
+    context['tasklen'] = range(len(tasks))
     context['id'] = r['id']
     context['name'] = r['name']
     context['userid'] = userid

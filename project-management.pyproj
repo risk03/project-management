@@ -57,6 +57,7 @@
     <Compile Include="__init__.py" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="static\static_files\jquery-3.6.0.min.js" />
     <Content Include="static\static_files\login.css" />
     <Content Include="templates\rest_client\artefact.html" />
     <Content Include="templates\rest_client\artefact_new.html" />

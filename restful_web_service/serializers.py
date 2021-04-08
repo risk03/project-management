@@ -16,6 +16,16 @@ class TaskComponentSerializer(serializers.ModelSerializer):
 
 
 class TaskLeafSerializer(serializers.ModelSerializer):
+    tlj = serializers.SerializerMethodField('tlj_f')
+
+    tej = serializers.SerializerMethodField('tej_f')
+
+    def tlj_f(self, o):
+        return o.tlj
+
+    def tej_f(self, o):
+        return o.tej
+
     class Meta:
         model = models.TaskLeaf
         fields = '__all__'
