@@ -1,5 +1,6 @@
 ﻿{% load static %}
 <!DOCTYPE html>
+<!--suppress HtmlUnknownTarget -->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -99,16 +100,18 @@
             <div class="form-group">
                 <label for="inputstart">Начало</label>
                 <input {% if not usermode and userid != creator_id %}disabled{% endif %} class="form-control input-lg"
-                       id="inputstart" type="datetime-local" name="start" {%if start%}value="{{start}}"{%endif%}>
+                       id="inputstart" type="datetime-local" name="start" {% if start %}value="{{ start }}"{% endif %}>
             </div>
             <div class="form-group">
                 <label for="inputend">Конец</label>
                 <input {% if not usermode and userid != responsible_id and userid != creator_id %}disabled{% endif %}
-                       class="form-control input-lg" id="inputend" type="datetime-local" name="end" {%if end%}value="{{end}}"{%endif%}>
+                       class="form-control input-lg" id="inputend" type="datetime-local" name="end"
+                       {% if end %}value="{{ end }}"{% endif %}>
             </div>
             <div class="form-group">
-                <label for="input_start_lb">Конец</label>
-                <input disabled class="form-control input-lg" id="input_start_r_lb" type="datetime-local" name="input_start_r_lb" {%if input_start_r_lb%}value="{{input_start_r_lb}}"{%endif%}>
+                <label for="input_start_r_lb">Конец</label>
+                <input disabled class="form-control input-lg" id="input_start_r_lb" type="datetime-local"
+                       name="input_start_r_lb" {% if input_start_r_lb %}value="{{ input_start_r_lb }}"{% endif %}>
             </div>
         {% endif %}
         {% if usermode or userid == creator_id or userid == responsible_id %}

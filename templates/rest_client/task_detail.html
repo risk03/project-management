@@ -1,4 +1,5 @@
 ﻿<!DOCTYPE html>
+<!--suppress HtmlUnknownTarget, JSUnresolvedFunction -->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -12,7 +13,7 @@
 
         function drawChart() {
             google.charts.load('current', {'packages': ['corechart'], 'language': 'rus'});
-            var data = new google.visualization.DataTable();
+            let data = new google.visualization.DataTable();
             data.addColumn('string', 'id');
             data.addColumn('string', 'Название');
             data.addColumn('date', 'Начало');
@@ -22,109 +23,124 @@
             data.addColumn('string', 'Зависимости');
             data.addRows([
                 {% for task in tasks %}
-                    ['{{ task.id }}', '{{task.name}}', new Date('{{ task.start }}'), new Date('{{ task.end }}'), null, {% if task.status == 'COM' or task.status == 'REJ' or task.status == 'REV' %}100{%else%}0{% endif %}, "{{task.prev}}"],
+                    {% if task.start and task.end %}
+                        ['{{ task.id }}', '{{task.name}}', new Date('{{ task.start }}'), new Date('{{ task.end }}'), null,
+                            {% if task.status == 'COM' or task.status == 'REJ' or task.status == 'REV' %}100{%else%}
+                                0{% endif %}, "{{task.prev}}"],
+                    {% endif %}
                 {% endfor %}
             ]);
-            var options = {
+            let options = {
                 height: 400,
                 gantt: {
                     trackHeight: 30
                 }
             };
-            var chart = new google.visualization.Gantt(document.getElementById('chart_div'));
+            let chart = new google.visualization.Gantt(document.getElementById('chart_div'));
             chart.draw(data, options);
         }
     </script>
     <script>
-    function init() {
-        //if (window.goSamples) goSamples();
-        var $ = go.GraphObject.make;  // for more concise visual tree definitions
+        function init() {
+            //if (window.goSamples) goSamples();
+            let $ = go.GraphObject.make;  // for more concise visual tree definitions
 
-        // colors used, named for easier identification
-        var blue = "#0288D1";
-        var pink = "#B71C1C";
-        var pinkfill = "#F8BBD0";
-        var bluefill = "#B3E5FC";
+            // colors used, named for easier identification
+            let blue = "#0288D1";
+            let pink = "#B71C1C";
+            let pinkfill = "#F8BBD0";
+            let bluefill = "#B3E5FC";
 
-        myDiagram =
-            $(go.Diagram, "pertchart",
-                {
-                    initialAutoScale: go.Diagram.Uniform,
-                    layout: $(go.LayeredDigraphLayout)
-                });
+            let myDiagram =
+                $(go.Diagram, "pertchart",
+                    {
+                        initialAutoScale: go.Diagram.Uniform,
+                        layout: $(go.LayeredDigraphLayout)
+                    });
 
-        myDiagram.nodeTemplate =
-            $(go.Node, "Auto",
-                $(go.Shape, "Circle",  // the border
-                    { fill: "white", strokeWidth: 2 },
-                    new go.Binding("fill", "critical", function (b) { return (b ? pinkfill : bluefill); }),
-                    new go.Binding("stroke", "critical", function (b) { return (b ? pink : blue); })),
-                $(go.Panel, "Table",
-                    { padding: 0 },
-                    $(go.RowColumnDefinition, { column: 1, separatorStroke: "pinkfill" }),
-                    $(go.RowColumnDefinition, { column: 2, separatorStroke: "pinkfill" }),
-                    $(go.RowColumnDefinition, { row: 1, separatorStroke: "pink"}),
-                    $(go.RowColumnDefinition, { row: 2, separatorStroke: "pink" }),
-                    $(go.TextBlock,
-                        new go.Binding("text", "early"),
-                        { row: 1, column: 0, margin: 5, textAlign: "center" }),
-                    $(go.TextBlock,
-                        new go.Binding("text", "reserve"),
-                        { row: 2, column: 1, margin: 5, textAlign: "center" }),
-                    $(go.TextBlock,
-                        new go.Binding("text", "late"),
-                        { row: 1, column: 2, margin: 5, textAlign: "center" }),
-                    $(go.TextBlock,
-                        new go.Binding("text", "text"),
-                        {
-                            row: 0, column: 1, margin: 5,
-                            textAlign: "center", font: "bold 14px sans-serif"
+            myDiagram.nodeTemplate =
+                $(go.Node, "Auto",
+                    $(go.Shape, "Circle",  // the border
+                        {fill: "white", strokeWidth: 2},
+                        new go.Binding("fill", "critical", function (b) {
+                            return (b ? pinkfill : bluefill);
                         }),
-                )  // end Table Panel
-            );  // end Node
+                        new go.Binding("stroke", "critical", function (b) {
+                            return (b ? pink : blue);
+                        })),
+                    $(go.Panel, "Table",
+                        {padding: 0},
+                        $(go.RowColumnDefinition, {column: 1, separatorStroke: "pinkfill"}),
+                        $(go.RowColumnDefinition, {column: 2, separatorStroke: "pinkfill"}),
+                        $(go.RowColumnDefinition, {row: 1, separatorStroke: "pink"}),
+                        $(go.RowColumnDefinition, {row: 2, separatorStroke: "pink"}),
+                        $(go.TextBlock,
+                            new go.Binding("text", "early"),
+                            {row: 1, column: 0, margin: 5, textAlign: "center"}),
+                        $(go.TextBlock,
+                            new go.Binding("text", "reserve"),
+                            {row: 2, column: 1, margin: 5, textAlign: "center"}),
+                        $(go.TextBlock,
+                            new go.Binding("text", "late"),
+                            {row: 1, column: 2, margin: 5, textAlign: "center"}),
+                        $(go.TextBlock,
+                            new go.Binding("text", "text"),
+                            {
+                                row: 0, column: 1, margin: 5,
+                                textAlign: "center", font: "bold 14px sans-serif"
+                            }),
+                    )  // end Table Panel
+                );  // end Node
 
-        function linkColorConverter(linkdata, elt) {
-            var link = elt.part;
-            if (!link) return blue;
-            var f = link.fromNode;
-            if (!f || !f.data || !f.data.critical) return blue;
-            var t = link.toNode;
-            if (!t || !t.data || !t.data.critical) return blue;
-            return pink;
+            function linkColorConverter(linkdata, elt) {
+                let link = elt.part;
+                if (!link) return blue;
+                let f = link.fromNode;
+                if (!f || !f.data || !f.data.critical) return blue;
+                let t = link.toNode;
+                if (!t || !t.data || !t.data.critical) return blue;
+                return pink;
+            }
+
+            myDiagram.linkTemplate =
+                $(go.Link,
+                    {toShortLength: 6, toEndSegmentLength: 20},
+                    $(go.Shape,
+                        {strokeWidth: 4},
+                        new go.Binding("stroke", "", linkColorConverter)),
+                    $(go.Shape,
+                        {toArrow: "Triangle", stroke: null, scale: 1.5},
+                        new go.Binding("fill", "", linkColorConverter))
+                );
+            let nodeDataArray = [
+                {%for i in taskslen %}
+                    {
+                        key: {{ tasks.i.id }},
+                        text: "{{i}}",
+                        reserve: {{ tasks.i.reserve }},
+                        early: {{ tasks.i.tej }},
+                        late: {{ tasks.i.tlj }},
+                        critical: true
+                    },
+                {% endfor %}
+                {key: -1, text: "start", reserve: 0, early: 0, late: 0, critical: true},
+            ];
+            let linkDataArray = [
+                {%for i in tasks %}
+                    {% if not i.prev %}
+                        {from: -1, to: {{i.id}}},
+                    {% endif %}
+                    {% for j in i.next %}
+                        {from: {{ i.id }}, to: {{j.id}}},
+                    {% endfor %}
+                {% endfor %}
+            ];
+            myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
+
         }
-
-        myDiagram.linkTemplate =
-            $(go.Link,
-                { toShortLength: 6, toEndSegmentLength: 20 },
-                $(go.Shape,
-                    { strokeWidth: 4 },
-                    new go.Binding("stroke", "", linkColorConverter)),
-                $(go.Shape,
-                    { toArrow: "Triangle", stroke: null, scale: 1.5 },
-                    new go.Binding("fill", "", linkColorConverter))
-            );
-        var nodeDataArray = [
-            {%for i in taskslen %}
-    {key: {{ tasks.i.id }}, text: "{{i}}", reserve: {{ tasks.i.reserve }}, early: {{ tasks.i.tej }}, late: {{ tasks.i.tlj }}, critical: true },
-    {% endfor %}
-    {key: -1, text: "start", reserve:0, early:0, late:0,critical:true},
-        ];
-    var linkDataArray =[
-        {%for i in tasks %}
-        {% if not i.prev %}
-        { from: -1, to: {{i.id}}},
-        {% endif %}
-            {% for j in i.next %}
-            {from: {{ i.id }}, to: {{j.id}} },
-            {% endfor %}
-        {% endfor %}
-        ];
-        myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
-
-    }
     </script>
 </head>
-<body>
+<body onload="init()">
 <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
     <a class="navbar-brand" href="#">АСУП</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse"

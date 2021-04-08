@@ -5,6 +5,7 @@ import django.db.models.deletion
 from django.contrib.auth.models import User
 
 
+# noinspection PyUnusedLocal
 def initial_data(apps, schema_editor):
     admin = apps.get_model("restful_web_service", "employee")(id=1, full_name="admin", short_name="admin", login="admin", salt="21232f297a57a5a743894a0e4a801fc3", hash="dcc3458e93367f0da48d0d74f91883a0", isadmin=True, position_id=None)
     admin.save()

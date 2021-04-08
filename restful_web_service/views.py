@@ -11,6 +11,7 @@ import restful_web_service.models as models
 import restful_web_service.serializers as serializers
 
 
+# noinspection PyMethodMayBeStatic
 class LoginView(APIView):
     authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [IsAuthenticated]
@@ -38,6 +39,7 @@ class PositionView(APIView):
         serializer = serializers.PositionSerializer(structure, many=True)
         return Response({"positions": serializer.data})
 
+    # noinspection PyUnusedLocal
     def post(self, request, pk=None):
         position = request.data.get('positions')
         serializer = serializers.PositionSerializer(data=position)
@@ -74,6 +76,7 @@ class TaskOfStructView(APIView):
         return Response({"tasks": serializer.data})  # noinspection PyMethodMayBeStatic
 
 
+# noinspection PyMethodMayBeStatic
 class TaskOfSysView(APIView):
     authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [IsAuthenticated]
@@ -97,6 +100,7 @@ class TaskView(APIView):
         serializer = serializers.TaskComponentSerializer(tasks, many=True)
         return Response({"tasks": serializer.data})
 
+    # noinspection PyUnusedLocal
     def post(self, request, pk=None):
         tasks = request.data.get('tasks')
         isgroup = request.data.get('isgroup')
@@ -126,12 +130,8 @@ class TaskView(APIView):
     def delete(self, request, pk):
         tasks = get_object_or_404(models.TaskComponent.objects.all(), pk=pk)
         tasks.delete()
-        try:
-            return Response({
-                "message": "Task with id `{}` has been deleted.".format(pk)
-            }, status=204)
-        except Exception:
-            pass
+        return Response({"message": "Task with id `{}` has been deleted.".format(pk)}, status=204)
+
 
 # noinspection PyMethodMayBeStatic
 class StructureView(APIView):
@@ -154,7 +154,7 @@ class StructureView(APIView):
         else:
             serializer = serializers.EmployeeSerializer(data=structures)
         if serializer.is_valid(raise_exception=True):
-            structures = serializer.save()
+            serializer.save()
         return Response({"success": "Structure '{}' created successfully".format(pk)})
 
     def put(self, request, pk):
@@ -167,10 +167,8 @@ class StructureView(APIView):
             structures = get_object_or_404(models.Employee.objects.all(), pk=pk)
             serializer = serializers.EmployeeSerializer(instance=structures, data=data, partial=True)
         if serializer.is_valid(raise_exception=True):
-            saved = serializer.save()
-            return Response({
-                "success": "Structure '{}' updated successfully".format(pk)
-            })
+            serializer.save()
+            return Response({"success": "Structure '{}' updated successfully".format(pk)})
 
     def delete(self, request, pk):
         tasks = get_object_or_404(models.StructureComponent.objects.all(), pk=pk)
@@ -180,6 +178,7 @@ class StructureView(APIView):
         }, status=204)
 
 
+# noinspection PyUnresolvedReferences
 def deldiv(division):
     if hasattr(division, 'division'):
         subs = division.division.child.all()
@@ -188,6 +187,7 @@ def deldiv(division):
         division.delete()
 
 
+# noinspection PyMethodMayBeStatic
 class DivisionView(APIView):
     authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [IsAuthenticated]
@@ -236,6 +236,7 @@ class ArtefactView(APIView):
         serializer = serializers.ArtefactSerializer(artefact, many=True)
         return Response({"artefacts": serializer.data})
 
+    # noinspection PyUnusedLocal
     def post(self, request, pk=None):
         artefacts = request.data.get('artefacts')
         serializer = serializers.ArtefactSerializer(data=artefacts)
@@ -285,6 +286,7 @@ class SystemView(APIView):
         serializer = serializers.SystemComponentSerializer(systems, many=True)
         return Response({"systems": serializer.data})
 
+    # noinspection PyUnusedLocal
     def post(self, request, pk=None):
         systems = request.data.get('systems')
         isgroup = request.data.get('isgroup')
@@ -319,6 +321,7 @@ class SystemView(APIView):
         }, status=204)
 
 
+# noinspection PyMethodMayBeStatic
 class SystemGroupView(APIView):
     authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [IsAuthenticated]
@@ -329,6 +332,7 @@ class SystemGroupView(APIView):
         return Response({"systemgroups": serializer.data})
 
 
+# noinspection PyMethodMayBeStatic
 class TaskGroupView(APIView):
     def get(self, request):
         groups = models.TaskGroup.objects.all()
@@ -336,11 +340,12 @@ class TaskGroupView(APIView):
         return Response({"taskgroups": serializer.data})
 
 
+# noinspection PyMethodMayBeStatic
 class PertView(APIView):
     def get(self, request, pk=None):
         if pk is None:
             return Response({"error": "no pk"})
         else:
             task_group = models.TaskGroup.objects.get(id=pk)
-            task_group.get_time();
+            task_group.get_time()
             return Response({"ok": "ok!"})

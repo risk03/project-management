@@ -1,5 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
+<!--suppress HtmlUnknownTarget -->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -75,7 +76,8 @@
             </div>
             <div class="form-group">
                 <label for="inputisadmin">Администратор</label>
-                <input {% if not adminmode or userid == pk %}disabled{% endif %} class="form-control" id="inputisadmin" type="checkbox"
+                <input {% if not adminmode or userid == pk %}disabled{% endif %} class="form-control" id="inputisadmin"
+                       type="checkbox"
                        name="isadmin" {% if is_admin %}
                        checked{% endif %}>
             </div>

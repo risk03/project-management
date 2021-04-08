@@ -20,10 +20,12 @@ class TaskLeafSerializer(serializers.ModelSerializer):
 
     tej = serializers.SerializerMethodField('tej_f')
 
-    def tlj_f(self, o):
+    @staticmethod
+    def tlj_f(o):
         return o.tlj
 
-    def tej_f(self, o):
+    @staticmethod
+    def tej_f(o):
         return o.tej
 
     class Meta:
