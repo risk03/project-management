@@ -1,4 +1,5 @@
 from django.db import models
+import datetime
 
 
 # Create your models here.
@@ -143,6 +144,9 @@ class TaskLeaf(TaskComponent):
     def __str__(self):
         return "{}".format(self.name)
 
+    def __repr__(self) -> str:
+        return "{}{} | {} | {} | {} | {} | {} | {} | {} ".format(('*' if self.is_critical else ' '), self.id, self.early_start, self.early_end, self.late_start, self.late_end, [x.id for x in self.prev.all()], [x.id for x in self.next.all()], self.duration)
+
 
 class Artefact(models.Model):
     title = models.CharField(max_length=255, null=False)
@@ -157,34 +161,39 @@ class Artefact(models.Model):
 class TaskGroup(TaskComponent):
     def __rec_get_time_there(self, task):
         task.early_end = task.early_start + task.duration
+        task.save()
         for next_task in task.next.all():
             if not next_task.early_start:
                 next_task.early_start = task.early_start + task.duration
             else:
                 next_task.early_start = max(next_task.early_start, task.early_start + task.duration)
+            next_task.save()
             self.__rec_get_time_there(next_task)
 
              
     def __rec_get_time_back(self, task):
         task.late_start = task.late_end - task.duration
+        task.save()
         for prev_task in task.prev.all():
             if not prev_task.late_end:
                 prev_task.late_end = task.late_end - task.duration
             else:
                 prev_task.late_end = min(prev_task.late_end, task.late_end - task.duration)
+            prev_task.save()
             self.__rec_get_time_back(prev_task)
 
 
     def get_time(self):
         tasks = self.deeper_tasks()
-        print(tasks[0])
         for task in [x for x in tasks if not x.prev.all()]:
-            task.early_start = 0
+            task.early_start = datetime.datetime.fromtimestamp(0)
+            task.save()
             self.__rec_get_time_there(task)
         end = [x for x in tasks if not x.next.all()]
         max_e= max([x.early_end for x in end])
         for task in end:
             task.late_end = max_e
+            task.save()
         for task in end:
             self.__rec_get_time_back(task)
     
