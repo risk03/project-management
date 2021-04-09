@@ -141,8 +141,6 @@ def tasks(request, pk):
         context['parent'] = j['parent']
     context['userid'] = userid
     context['username'] = rest(GET, 'structures/' + str(userid)).json()['structures'][0]['short_name']
-    for k in context:
-        print(context[k])
     return render(request, 'rest_client/tasks.html', context)
 
 
@@ -268,7 +266,6 @@ def structures(request, pk=None):
         context['parents'] = parents
         tasks_1 = []
         for i in rest(GET, 'tasks/of/struct/' + str(pk)).json()['tasks']:
-            print(i, type(i))
             tasks_1.append({'id': i['id'], 'name': i['name'], 'creator_id': i['creator'], 'status': i['status'],
                             'creator': rest(GET, 'structures/' + str(i['creator'])).json()['structures'][0][
                                 'short_name'],
@@ -575,11 +572,14 @@ def get_child(task, out_list):
         if not task['end']:
             out_list = [x for x in [task['real_early_end'], task['prop_early_end']] if x is not None]
             task['end'] = max(out_list) if out_list else None
+        task['prev_list'] = task['prev']
         task['prev'] = ','.join([str(x) for x in task['prev']])
+        task['next_list'] = task['next']
         if task['tlj'] and task['tej']:
-            task['reserve'] = datetime.datetime.strptime(task['tlj'], '%Y-%m-%dT%H:%M:%SZ').replace(
+            reserve = (datetime.datetime.strptime(task['tlj'], '%Y-%m-%dT%H:%M:%SZ').replace(
                 microsecond=0) - datetime.datetime.strptime(task['tej'], '%Y-%m-%dT%H:%M:%SZ').replace(
-                microsecond=0)
+                microsecond=0))
+            task['reserve'] = reserve.days
 
 
 def task_details(request, pk):
@@ -590,11 +590,21 @@ def task_details(request, pk):
     tasks_1 = []
     r = rest(GET, 'tasks/' + str(pk)).json()['tasks'][0]
     get_child(r, tasks_1)
-    print(tasks_1)
+    start = None
+    end = None
+    for task in [x for x in tasks_1 if not x['prev']]:
+        if not start or datetime.datetime.strptime(task['prop_early_start'], '%Y-%m-%dT%H:%M:%SZ').replace(microsecond=0) < start:
+            start = datetime.datetime.strptime(task['prop_early_start'], '%Y-%m-%dT%H:%M:%SZ').replace(microsecond=0)
+    for task in [x for x in tasks_1 if not x['next']]:
+        if not end or datetime.datetime.strptime(task['prop_late_end'], '%Y-%m-%dT%H:%M:%SZ').replace(microsecond=0) > end:
+            end = datetime.datetime.strptime(task['prop_late_end'], '%Y-%m-%dT%H:%M:%SZ').replace(microsecond=0)
+    context['taskslen'] = len(tasks_1)
+    for i in range(len(tasks_1)):
+        tasks_1[i]['local_id'] = i + 1
     context['tasks'] = tasks_1
-    context['tasklen'] = range(len(tasks_1))
     context['id'] = r['id']
     context['name'] = r['name']
+    context['is_group'] = 'child' in r
     context['userid'] = userid
     context['username'] = rest(GET, 'structures/' + str(userid)).json()['structures'][0]['short_name']
     return render(request, 'rest_client/task_detail.html', context)

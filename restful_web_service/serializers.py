@@ -20,6 +20,8 @@ class TaskLeafSerializer(serializers.ModelSerializer):
 
     tej = serializers.SerializerMethodField('tej_f')
 
+    next = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+
     @staticmethod
     def tlj_f(o):
         return o.tlj
@@ -31,6 +33,7 @@ class TaskLeafSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.TaskLeaf
         fields = '__all__'
+
 
 
 class ArtefactSerializer(serializers.ModelSerializer):
