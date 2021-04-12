@@ -11,6 +11,7 @@ urlpatterns = [
     path('tasks/of/struct/<int:pk>', views.TaskOfStructView.as_view()),
     path('tasks/of/sys/<int:pk>', views.TaskOfSysView.as_view()),
     path('taskgroups/', views.TaskGroupView.as_view()),
+    path('project_leaves/<int:pk>/', views.ProjectLeaves.as_view()),
     path('tasks/<int:pk>/', views.TaskView.as_view()),
     path('systems/', views.SystemView.as_view()),
     path('systemparts/', views.SystempartsView.as_view()),

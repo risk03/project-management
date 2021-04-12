@@ -20,6 +20,8 @@ class TaskLeafSerializer(serializers.ModelSerializer):
 
     tej = serializers.SerializerMethodField('tej_f')
 
+    project = serializers.SerializerMethodField('project_f')
+
     next = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
     @staticmethod
@@ -29,6 +31,10 @@ class TaskLeafSerializer(serializers.ModelSerializer):
     @staticmethod
     def tej_f(o):
         return o.tej
+
+    @staticmethod
+    def project_f(o):
+        return o.project()
 
     class Meta:
         model = models.TaskLeaf

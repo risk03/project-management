@@ -45,51 +45,48 @@
         <div class="form-group">
             <label for="inputname">Название</label>
             <input {% if not usermode and userid != creator_id %}disabled{% endif %}
-                   class="form-control input-lg" id="inputname" type="text" name="name" value="{{ name }}">
+                   class="form-control input-sm" id="inputname" type="text" name="name" value="{{ task.name }}">
         </div>
-        {% if not is_group %}
-            <div class="form-group">
-                <label for="inpurparent">Надзадача</label>
-                <select {% if not usermode and userid and userid != creator_id %}disabled{% endif %}
-                        class="form-control input-lg" id="inpurparent" name="parent">
-                    {% for taskgroup in taskgroups %}
-                        <option value="{{ taskgroup.id }}"
-                                {% if taskgroup.id == parent %}selected{% endif %}>{{ taskgroup.name }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-        {% endif %}
         <div class="form-group">
-            <label for="inputresponsible"><a href="/client/stryctures/{{ responsible_id }}">Ответственный</a></label>
+            <label for="inputresponsible"><a href="/client/structures/{{ responsible_id }}">Ответственный</a></label>
             <select {% if not usermode and userid and userid != creator_id %}disabled{% endif %}
-                    class="form-control input-lg" id="inputresponsible" name="responsible">
+                    class="form-control input-sm" id="inputresponsible" name="responsible">
                 {% for employee in employees %}
                     <option value="{{ employee.id }}"
                             {% if employee.id == responsible_id %}selected{% endif %}>{{ employee.short_name }}</option>
                 {% endfor %}
             </select>
         </div>
+        <div class="form-group">
+            <label for="inputcreator"><a href="/client/structures/{{ creator_id }}">Создатель</a></label>
+            <input disabled class="form-control input-sm" id="inputcreator" type="text" value="{{ creator }}">
+        </div>
+        <!------------------------------------------------------------------------------------------------------------------->
         {% if not is_group %}
+            <div class="form-group">
+                <label for="inpurparent">Надзадача</label>
+                <select {% if not usermode and userid and userid != creator_id %}disabled{% endif %}
+                        class="form-control input-sm" id="inpurparent" name="parent">
+                    {% for taskgroup in taskgroups %}
+                        <option value="{{ taskgroup.id }}"
+                                {% if taskgroup.id == parent %}selected{% endif %}>{{ taskgroup.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
             <div class="form-group">
                 <label for="inputsystem"><a href="/client/systems/{{ system_id }}">Система</a></label>
                 <select {% if not usermode and userid != creator_id %}disabled{% endif %}
-                        class="form-control input-lg" id="inputsystem" name="system">
+                        class="form-control input-sm" id="inputsystem" name="system">
                     {% for system in systems %}
                         <option value="{{ system.id }}"
                                 {% if system.id == system_id %}selected{% endif %}>{{ system.name }}</option>
                     {% endfor %}
                 </select>
             </div>
-        {% endif %}
-        <div class="form-group">
-            <label for="inputcreator"><a href="/client/structures/{{ creator_id }}">Создатель</a></label>
-            <input disabled class="form-control input-lg" id="inputcreator" type="text" value="{{ creator }}">
-        </div>
-        {% if not is_group %}
             <div class="form-group">
                 <label for="inputstart">Статус</label>
                 <select {% if not usermode and userid != responsible_id and userid != creator_id %}disabled{% endif %}
-                        class="form-control input-lg" id="inputstart" name="status">
+                        class="form-control input-sm" id="inputstart" name="status">
                     <option value="NEW" {% if status == 'NEW' %}selected{% endif %}>Новая</option>
                     <option value="PRO" {% if status == 'PRO' %}selected{% endif %}>Выполняется</option>
                     <option value="COM" {% if status == 'COM' %}selected{% endif %}>Завершена</option>
@@ -98,25 +95,84 @@
                 </select>
             </div>
             <div class="form-group">
-                <label for="inputstart">Начало</label>
-                <input {% if not usermode and userid != creator_id %}disabled{% endif %} class="form-control input-lg"
+                <label for="inputstart">Фактическое начало</label>
+                <input {% if not usermode and userid != creator_id %}disabled{% endif %} class="form-control input-sm"
                        id="inputstart" type="datetime-local" name="start" {% if start %}value="{{ start }}"{% endif %}>
             </div>
-            <div class="form-group">
-                <label for="inputend">Конец</label>
+            <div class="form-group row" style="margin:0">
+                <label for="inputdurationD">Плановая продолжительность</label>
+                <div class="col-xs-1">
+                    <input {% if not usermode and userid != responsible_id and userid != creator_id %}disabled{% endif %}
+                           class="form-control input-sm" id="inputdurationD" type="number" min="0" value="{{durationD}}" name="durationD">
+                </div>
+                <div class="col-xs-1">
+                    д.
+                </div>
+                <div class="col-xs-1">
                 <input {% if not usermode and userid != responsible_id and userid != creator_id %}disabled{% endif %}
-                       class="form-control input-lg" id="inputend" type="datetime-local" name="end"
-                       {% if end %}value="{{ end }}"{% endif %}>
+                       class="form-control input-sm" id="inputdurationH" type="number" min="0" value="{{durationH}}" name="durationH">
+                </div>
+                <div class="col-xs-1">
+                    ч.
+                </div>
             </div>
             <div class="form-group">
-                <label for="input_start_r_lb">Конец</label>
-                <input disabled class="form-control input-lg" id="input_start_r_lb" type="datetime-local"
-                       name="input_start_r_lb" {% if input_start_r_lb %}value="{{ input_start_r_lb }}"{% endif %}>
+                <label for="inputend">Фактический конец</label>
+                <input {% if not usermode and userid != responsible_id and userid != creator_id %}disabled{% endif %}
+                       class="form-control input-sm" id="inputend" type="datetime-local" name="end"
+                       {% if end %}value="{{ task.end }}"{% endif %}>
             </div>
+            <div class="form-group">
+                <label for="next" style="vertical-align:top">Следующие задачи</label>
+                <select multiple name="next">
+                    {%for i in nexts%}
+                    <option value="{{i.id}}" {% if i.selected %} selected {% endif %} >
+                        {{i.name}}
+                    </option>
+                    {%endfor%}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="prev" style="vertical-align:top">Предыдущие задачи</label>
+                <select multiple name="prev">
+                    {%for i in prevs%}
+                    <option value="{{i.id}}" {% if i.selected %} selected {% endif %} >
+                        {{i.name}}
+                    </option>
+                    {%endfor%}
+                </select>
+            </div>
+            <div>
+                <label for="inputreal_early_start">Начало не ранее</label>
+                <input {% if not usermode and userid != responsible_id and userid != creator_id %}disabled{% endif %}
+                       class="form-control input-sm" id="inputreal_early_start" type="datetime-local" name="real_early_start"
+                       {% if end %}value="{{ task.real_early_start }}"{% endif %}/>
+            </div>
+            <div>
+                <label for="inputreal_late_start">Начало не позднее</label>
+                <input {% if not usermode and userid != responsible_id and userid != creator_id %}disabled{% endif %}
+                       class="form-control input-sm" id="inputreal_late_start" type="datetime-local" name="real_late_start"
+                       {% if end %}value="{{ task.real_late_start }}"{% endif %}/>
+            </div>
+            <div>
+                <label for="inputreal_early_end">Конец не ранее</label>
+                <input {% if not usermode and userid != responsible_id and userid != creator_id %}disabled{% endif %}
+                       class="form-control input-sm" id="inputreal_early_end" type="datetime-local" name="real_early_end"
+                       {% if end %}value="{{ task.real_early_end }}"{% endif %}/>
+            </div>
+            <div>
+                <label for="inputreal_late_end">Конец не позднее</label>
+                <input {% if not usermode and userid != responsible_id and userid != creator_id %}disabled{% endif %}
+                       class="form-control input-sm" id="inputreal_late_end" type="datetime-local" name="real_late_end"
+                       {% if end %}value="{{ task.real_late_end }}"{% endif %}/>
+            </div>
+        <!------------------------------------------------------------------------------------------------------------------->
         {% endif %}
         {% if usermode or userid == creator_id or userid == responsible_id %}
-            <button type="submit" name="save" class="btn btn-primary">Сохранить</button>
-            <button type="submit" name="delete" class="btn btn-danger">Удалить</button>
+            <div>
+                <button type="submit" name="save" class="btn btn-primary">Сохранить</button>
+                <button type="submit" name="delete" class="btn btn-danger">Удалить</button>
+            </div>
         {% endif %}
     </form>
     {% if is_group %}

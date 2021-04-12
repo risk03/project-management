@@ -35,6 +35,12 @@ class TaskLeaf(TaskComponent):
     prop_early_end = models.DateTimeField(null=True, blank=True)
     prop_late_end = models.DateTimeField(null=True, blank=True)
 
+    def project(self):
+        project = self.parent
+        while project.parent:
+            project = project.parent
+        return project.id
+
     @property
     def tei(self):
         if self.prev.all():
