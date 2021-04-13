@@ -94,7 +94,7 @@ def tasks(request, pk):
         save = {}
         for field in fields:
             if field in request.GET:
-                save[field] = request.GET[field] if request.GET[fielde] != '' else null
+                save[field] = request.GET[field] if request.GET[field] != '' else None
         save["duration"] = "{} {}:00:00".format(request.GET['durationD'] if 'durationD' in request.GET else '0', request.GET['durationH'] if 'durationH' in request.GET else '0')
         save["next"] = []
         for a in request.GET.getlist('next'):
