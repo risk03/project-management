@@ -41,7 +41,6 @@ class TaskLeafSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-
 class ArtefactSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Artefact

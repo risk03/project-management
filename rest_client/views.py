@@ -90,12 +90,14 @@ def tasks(request, pk):
         rest(DELETE, 'tasks/' + str(pk))
         return redirect('/client/tasks/' + ('' if j['parent'] is None else str(j['parent'])))
     if 'save' in request.GET:
-        fields = ["name", "start", "end", "parent", "responsible", "system", "status", "real_early_start", "real_late_start", "real_early_end", "real_late_end"]
+        fields = ["name", "start", "end", "parent", "responsible", "system", "status", "real_early_start",
+                  "real_late_start", "real_early_end", "real_late_end"]
         save = {}
         for field in fields:
             if field in request.GET:
                 save[field] = request.GET[field] if request.GET[field] != '' else None
-        save["duration"] = "{} {}:00:00".format(request.GET['durationD'] if 'durationD' in request.GET else '0', request.GET['durationH'] if 'durationH' in request.GET else '0')
+        save["duration"] = "{} {}:00:00".format(request.GET['durationD'] if 'durationD' in request.GET else '0',
+                                                request.GET['durationH'] if 'durationH' in request.GET else '0')
         save["next"] = []
         for a in request.GET.getlist('next'):
             save["next"].append(int(a))
@@ -108,7 +110,7 @@ def tasks(request, pk):
             "isgroup": 'child' in j
         })
         print(res)
-        rest(GET, 'tasks/gettime/'+str(j['project'])+'/')
+        rest(GET, 'tasks/gettime/' + str(j['project']) + '/')
         return redirect('/client/tasks/' + str(pk))
     context = {'task': j}
     if 'child' in j:
@@ -137,9 +139,9 @@ def tasks(request, pk):
         project_id = j['project']
         context['nexts'] = []
         context['prevs'] = []
-        for t in rest(GET, 'project_leaves/'+str(project_id)).json()['tasks']:
-            context['nexts'].append({'id':t['id'], 'name':t['id']})
-            context['prevs'].append({'id':t['id'], 'name':t['id']})
+        for t in rest(GET, 'project_leaves/' + str(project_id)).json()['tasks']:
+            context['nexts'].append({'id': t['id'], 'name': t['id']})
+            context['prevs'].append({'id': t['id'], 'name': t['id']})
         for i in context['nexts']:
             if i['id'] in j['next']:
                 i['selected'] = 1
@@ -148,7 +150,7 @@ def tasks(request, pk):
                 i['selected'] = 1
         duration = j['duration']
         context['durationD'] = duration[:duration.index(' ')]
-        context['durationH'] = duration[duration.index(' ')+1:duration.index(':')]
+        context['durationH'] = duration[duration.index(' ') + 1:duration.index(':')]
     employees = []
     for employee in rest(GET, 'employees/').json()['employees']:
         employees.append({'id': employee['id'], 'short_name': employee['short_name']})
@@ -619,11 +621,13 @@ def task_details(request, pk):
     start = None
     end = None
     for task in [x for x in tasks_1 if not x['prev']]:
-        if not start or datetime.datetime.strptime(task['prop_early_start'], '%Y-%m-%dT%H:%M:%SZ').replace(microsecond=0) < datetime.datetime.strptime(start, '%Y-%m-%dT%H:%M:%SZ').replace(microsecond=0):
+        if not start or datetime.datetime.strptime(task['prop_early_start'], '%Y-%m-%dT%H:%M:%SZ').replace(
+                microsecond=0) < datetime.datetime.strptime(start, '%Y-%m-%dT%H:%M:%SZ').replace(microsecond=0):
             start = task['prop_early_start']
     context['start'] = str(start)
     for task in [x for x in tasks_1 if not x['next']]:
-        if not end or datetime.datetime.strptime(task['prop_late_end'], '%Y-%m-%dT%H:%M:%SZ').replace(microsecond=0) > datetime.datetime.strptime(end, '%Y-%m-%dT%H:%M:%SZ').replace(microsecond=0):
+        if not end or datetime.datetime.strptime(task['prop_late_end'], '%Y-%m-%dT%H:%M:%SZ').replace(
+                microsecond=0) > datetime.datetime.strptime(end, '%Y-%m-%dT%H:%M:%SZ').replace(microsecond=0):
             end = task['prop_late_end']
     context['end'] = str(end)
     context['taskslen'] = len(tasks_1)

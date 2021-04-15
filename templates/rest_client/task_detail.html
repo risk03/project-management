@@ -42,155 +42,170 @@
             chart.draw(data, options);
         }
     </script>
-    {%if is_group%}
-    <script>
-        function init() {
-            //if (window.goSamples) goSamples();
-            let $ = go.GraphObject.make;  // for more concise visual tree definitions
+    {% if is_group %}
+        <script>
+            function init() {
+                //if (window.goSamples) goSamples();
+                let $ = go.GraphObject.make;  // for more concise visual tree definitions
 
-            // colors used, named for easier identification
-            let blue = "#0288D1";
-            let pink = "#B71C1C";
-            let pinkfill = "#F8BBD0";
-            let bluefill = "#B3E5FC";
+                // colors used, named for easier identification
+                let blue = "#0288D1";
+                let pink = "#B71C1C";
+                let pinkfill = "#F8BBD0";
+                let bluefill = "#B3E5FC";
 
-            let myDiagram =
-                $(go.Diagram, "pertchart",
-                    {
-                        initialAutoScale: go.Diagram.Uniform,
-                        layout: $(go.LayeredDigraphLayout)
-                    });
+                let myDiagram =
+                    $(go.Diagram, "pertchart",
+                        {
+                            initialAutoScale: go.Diagram.Uniform,
+                            layout: $(go.LayeredDigraphLayout)
+                        });
 
-            myDiagram.nodeTemplate =
-                $(go.Node, "Auto",
-                    $(go.Shape, "Circle",  // the border
-                        {fill: "white", strokeWidth: 2},
-                        new go.Binding("fill", "critical", function (b) {
-                            return (b ? pinkfill : bluefill);
-                        }),
-                        new go.Binding("stroke", "critical", function (b) {
-                            return (b ? pink : blue);
-                        })),
-                    $(go.Panel, "Table",
-                        {padding: 0},
-                        $(go.RowColumnDefinition, {column: 1}),
-                        $(go.RowColumnDefinition, {column: 2}),
-                        $(go.RowColumnDefinition, {row: 1}),
-                        $(go.RowColumnDefinition, {row: 2}),
-                        $(go.TextBlock,
-                            new go.Binding("text", "early"),
-                            {row: 1, column: 0, margin: 0, textAlign: "center"}),
-                        $(go.TextBlock,
-                            new go.Binding("text", "reserve"),
-                            {row: 2, column: 1, margin: 0, textAlign: "center"}),
-                        $(go.TextBlock,
-                            new go.Binding("text", "late"),
-                            {row: 1, column: 2, margin: 0, textAlign: "center"}),
-                        $(go.TextBlock,
-                            new go.Binding("text", "text"),
-                            {
-                                row: 0, column: 1, margin: 0,
-                                textAlign: "center", font: "bold 14px sans-serif"
+                myDiagram.nodeTemplate =
+                    $(go.Node, "Auto",
+                        $(go.Shape, "Circle",  // the border
+                            {fill: "white", strokeWidth: 2},
+                            new go.Binding("fill", "critical", function (b) {
+                                return (b ? pinkfill : bluefill);
                             }),
-                    )  // end Table Panel
-                );  // end Node
-            function linkColorConverter(linkdata, elt) {
-                let link = elt.part;
-                if (!link) return blue;
-                let f = link.fromNode;
-                if (!f || !f.data || !f.data.critical) return blue;
-                let t = link.toNode;
-                if (!t || !t.data || !t.data.critical) return blue;
-                return pink;
-            }
+                            new go.Binding("stroke", "critical", function (b) {
+                                return (b ? pink : blue);
+                            })),
+                        $(go.Panel, "Table",
+                            {padding: 0},
+                            $(go.RowColumnDefinition, {column: 1}),
+                            $(go.RowColumnDefinition, {column: 2}),
+                            $(go.RowColumnDefinition, {row: 1}),
+                            $(go.RowColumnDefinition, {row: 2}),
+                            $(go.TextBlock,
+                                new go.Binding("text", "early"),
+                                {row: 1, column: 0, margin: 0, textAlign: "center"}),
+                            $(go.TextBlock,
+                                new go.Binding("text", "reserve"),
+                                {row: 2, column: 1, margin: 0, textAlign: "center"}),
+                            $(go.TextBlock,
+                                new go.Binding("text", "late"),
+                                {row: 1, column: 2, margin: 0, textAlign: "center"}),
+                            $(go.TextBlock,
+                                new go.Binding("text", "text"),
+                                {
+                                    row: 0, column: 1, margin: 0,
+                                    textAlign: "center", font: "bold 14px sans-serif"
+                                }),
+                        )  // end Table Panel
+                    );  // end Node
+                function linkColorConverter(linkdata, elt) {
+                    let link = elt.part;
+                    if (!link) return blue;
+                    let f = link.fromNode;
+                    if (!f || !f.data || !f.data.critical) return blue;
+                    let t = link.toNode;
+                    if (!t || !t.data || !t.data.critical) return blue;
+                    return pink;
+                }
 
-            myDiagram.linkTemplate =
-                $(go.Link,
-                    {toShortLength: 6, toEndSegmentLength: 20},
-                    $(go.Shape,
-                        {strokeWidth: 4},
-                        new go.Binding("stroke", "", linkColorConverter)),
-                    $(go.Shape,
-                        {toArrow: "Triangle", stroke: null, scale: 1.5},
-                        new go.Binding("fill", "", linkColorConverter))
-                );
+                myDiagram.linkTemplate =
+                    $(go.Link,
+                        {toShortLength: 6, toEndSegmentLength: 20},
+                        $(go.Shape,
+                            {strokeWidth: 4},
+                            new go.Binding("stroke", "", linkColorConverter)),
+                        $(go.Shape,
+                            {toArrow: "Triangle", stroke: null, scale: 1.5},
+                            new go.Binding("fill", "", linkColorConverter))
+                    );
 
-            let nodeDataArray = [
-                {%for task in tasks %}
-                    {
-                        key: {{ task.id }},
-                        text: "{{task.local_id}}",
-                        reserve: "{{ task.reserve }}",
-                        early: new Date('{{ task.tej }}').toLocaleDateString('ru-RU'),
-                        late: new Date('{{ task.tlj }}').toLocaleDateString('ru-RU'),
-                        critical: {{task.is_critical|yesno:"true,false"}}
-                    },
-        {% endfor %}
-        { key: -1, text: "0", reserve: 0, early: new Date('{{start}}').toLocaleDateString('ru-RU'), late: new Date('{{start}}').toLocaleDateString('ru-RU'), critical: true },
-        { key: {{taskslen | add:"2"}}, text: "{{taskslen}}", reserve: 0, early: new Date('{{end}}').toLocaleDateString('ru-RU'), late: new Date('{{end}}').toLocaleDateString('ru-RU'), critical: true },
-            ];
-
-            let linkDataArray = [
-                {%for i in tasks %}
-                    {% if not i.prev_list %}
-                        {from: -1, to: {{i.id}}},
-                    {% endif %}
-        {%if not i.next_list%}
-        { from: {{i.id}}, to: {{taskslen|add:"2"}} },
-        {%endif%}
-                    {% for j in i.prev_list %}
-                        {from: {{ j }}, to: {{i.id}}},
+                let nodeDataArray = [
+                    {%for task in tasks %}
+                        {
+                            key: {{ task.id }},
+                            text: "{{task.local_id}}",
+                            reserve: "{{ task.reserve }}",
+                            early: new Date('{{ task.tej }}').toLocaleDateString('ru-RU'),
+                            late: new Date('{{ task.tlj }}').toLocaleDateString('ru-RU'),
+                            critical: {{task.is_critical|yesno:"true,false"}}
+                        },
                     {% endfor %}
-                {% endfor %}
-            ];
-            myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
-        }
-    </script>
-    {%endif%}
+                    {
+                        key: -1,
+                        text: "0",
+                        reserve: 0,
+                        early: new Date('{{start}}').toLocaleDateString('ru-RU'),
+                        late: new Date('{{start}}').toLocaleDateString('ru-RU'),
+                        critical: true
+                    },
+                    {
+                        key: {{taskslen | add:"2"}},
+                        text: "{{taskslen}}",
+                        reserve: 0,
+                        early: new Date('{{end}}').toLocaleDateString('ru-RU'),
+                        late: new Date('{{end}}').toLocaleDateString('ru-RU'),
+                        critical: true
+                    },
+                ];
+
+                let linkDataArray = [
+                    {%for i in tasks %}
+                        {% if not i.prev_list %}
+                            {from: -1, to: {{i.id}}},
+                        {% endif %}
+                        {%if not i.next_list%}
+                            {from: {{i.id}}, to: {{taskslen|add:"2"}}},
+                        {%endif%}
+                        {% for j in i.prev_list %}
+                            {from: {{ j }}, to: {{i.id}}},
+                        {% endfor %}
+                    {% endfor %}
+                ];
+                myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
+            }
+        </script>
+    {% endif %}
 </head>
-<body{%if is_group%} onload="init()"{%endif%}>
-    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-        <a class="navbar-brand" href="#">АСУП</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse"
-                aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarCollapse">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item active">
-                    <a class="nav-link" href="/client/tasks/">Проекты<span class="sr-only">(current)</span></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/client/structures/">Структура</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/client/employees/">Сотрудники</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/client/systems/">Системы</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/client/positions/">Должности</a>
-                </li>
-            </ul>
-            <a class="nav-link text-light" href="/client/structures/{{ userid }}">{{ username }}</a>
-            <a class="nav-link text-light" href="/client/logout/">Выход</a>
-        </div>
-    </nav>
-    <main role="main" class="container-fluid" style="padding-top: 4.5rem">
-        <a class="btn btn-primary" href="/client/tasks/{{ id }}">Назад</a>
-        <h1>{{ name }}</h1>
-        {% if is_group %}
+<body{% if is_group %} onload="init()"{% endif %}>
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <a class="navbar-brand" href="#">АСУП</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse"
+            aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a class="nav-link" href="/client/tasks/">Проекты<span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/client/structures/">Структура</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/client/employees/">Сотрудники</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/client/systems/">Системы</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/client/positions/">Должности</a>
+            </li>
+        </ul>
+        <a class="nav-link text-light" href="/client/structures/{{ userid }}">{{ username }}</a>
+        <a class="nav-link text-light" href="/client/logout/">Выход</a>
+    </div>
+</nav>
+<main role="main" class="container-fluid" style="padding-top: 4.5rem">
+    <a class="btn btn-primary" href="/client/tasks/{{ id }}">Назад</a>
+    <h1>{{ name }}</h1>
+    {% if is_group %}
         <div style="padding: 1em">
             <h2>Сетевой график</h2>
             <div id="pertchart" style="border: solid 1px black; width:100%; height:67vh"></div>
         </div>
-        {% endif %}
-        <div style="padding: 1em">
-            <h2>Состояние подзадач</h2>
-            <div>
-                {% for task in tasks %}
-                <a href="/client/tasks/{{ task.id }}">{{ task.local_id }} "{{ task.name }}" <span style="font-size:0.85em">(id:{{task.id}})</span></a> -
+    {% endif %}
+    <div style="padding: 1em">
+        <h2>Состояние подзадач</h2>
+        <div>
+            {% for task in tasks %}
+                <a href="/client/tasks/{{ task.id }}">{{ task.local_id }} "{{ task.name }}" <span
+                        style="font-size:0.85em">(id:{{ task.id }})</span></a> -
                 {% if task.status == 'NEW' %}<span style="color: orange; font-weight: bold">Новая</span>
                 {% elif task.status == 'PRO' %}<span style="color: green; font-weight: bold">Выполняется</span>
                 {% elif task.status == 'COM' %}<span style="color: blue; font-weight: bold">Завершена</span>
@@ -198,13 +213,13 @@
                 {% elif task.status == 'REV' %}<span style="color: orange; font-weight: bold">Требуется доработка</span>
                 {% endif %}
                 <br>
-                {% endfor %}
-            </div>
+            {% endfor %}
         </div>
-        <div style="padding: 1em">
-            <h2>Диаграмма Гантта</h2>
-            <div id="chart_div" style="padding-top: 1rem; width: 85%; margin: auto"></div>
-        </div>
-    </main>
+    </div>
+    <div style="padding: 1em">
+        <h2>Диаграмма Гантта</h2>
+        <div id="chart_div" style="padding-top: 1rem; width: 85%; margin: auto"></div>
+    </div>
+</main>
 </body>
 </html>

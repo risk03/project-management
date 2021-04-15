@@ -86,10 +86,11 @@ class TaskOfSysView(APIView):
         serializer = serializers.TaskComponentSerializer(tasks, many=True)
         return Response({"tasks": serializer.data})
 
+
 class ProjectLeaves(APIView):
     authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [IsAuthenticated]
-    
+
     @staticmethod
     def deeper(o, out_list):
         for task in o.child.all():
@@ -98,13 +99,13 @@ class ProjectLeaves(APIView):
             else:
                 out_list.append(task.taskleaf)
 
-
     def get(self, request, pk):
         project = models.TaskGroup.objects.filter(pk=pk)[0]
         tasks = []
         ProjectLeaves.deeper(project, tasks)
         serializer = serializers.TaskLeafSerializer(tasks, many=True)
         return Response({"tasks": serializer.data})
+
 
 # noinspection PyMethodMayBeStatic
 class TaskView(APIView):

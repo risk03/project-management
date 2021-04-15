@@ -103,14 +103,16 @@
                 <label for="inputdurationD">Плановая продолжительность</label>
                 <div class="col-xs-1">
                     <input {% if not usermode and userid != responsible_id and userid != creator_id %}disabled{% endif %}
-                           class="form-control input-sm" id="inputdurationD" type="number" min="0" value="{{durationD}}" name="durationD">
+                           class="form-control input-sm" id="inputdurationD" type="number" min="0"
+                           value="{{ durationD }}" name="durationD">
                 </div>
                 <div class="col-xs-1">
                     д.
                 </div>
                 <div class="col-xs-1">
-                <input {% if not usermode and userid != responsible_id and userid != creator_id %}disabled{% endif %}
-                       class="form-control input-sm" id="inputdurationH" type="number" min="0" value="{{durationH}}" name="durationH">
+                    <input {% if not usermode and userid != responsible_id and userid != creator_id %}disabled{% endif %}
+                           class="form-control input-sm" id="inputdurationH" type="number" min="0"
+                           value="{{ durationH }}" name="durationH">
                 </div>
                 <div class="col-xs-1">
                     ч.
@@ -125,39 +127,42 @@
             <div class="form-group">
                 <label for="next" style="vertical-align:top">Следующие задачи</label>
                 <select multiple name="next">
-                    {%for i in nexts%}
-                    <option value="{{i.id}}" {% if i.selected %} selected {% endif %} >
-                        {{i.name}}
-                    </option>
-                    {%endfor%}
+                    {% for i in nexts %}
+                        <option value="{{ i.id }}" {% if i.selected %} selected {% endif %} >
+                            {{ i.name }}
+                        </option>
+                    {% endfor %}
                 </select>
             </div>
             <div class="form-group">
                 <label for="prev" style="vertical-align:top">Предыдущие задачи</label>
                 <select multiple name="prev">
-                    {%for i in prevs%}
-                    <option value="{{i.id}}" {% if i.selected %} selected {% endif %} >
-                        {{i.name}}
-                    </option>
-                    {%endfor%}
+                    {% for i in prevs %}
+                        <option value="{{ i.id }}" {% if i.selected %} selected {% endif %} >
+                            {{ i.name }}
+                        </option>
+                    {% endfor %}
                 </select>
             </div>
             <div>
                 <label for="inputreal_early_start">Начало не ранее</label>
                 <input {% if not usermode and userid != responsible_id and userid != creator_id %}disabled{% endif %}
-                       class="form-control input-sm" id="inputreal_early_start" type="datetime-local" name="real_early_start"
+                       class="form-control input-sm" id="inputreal_early_start" type="datetime-local"
+                       name="real_early_start"
                        {% if end %}value="{{ task.real_early_start }}"{% endif %}/>
             </div>
             <div>
                 <label for="inputreal_late_start">Начало не позднее</label>
                 <input {% if not usermode and userid != responsible_id and userid != creator_id %}disabled{% endif %}
-                       class="form-control input-sm" id="inputreal_late_start" type="datetime-local" name="real_late_start"
+                       class="form-control input-sm" id="inputreal_late_start" type="datetime-local"
+                       name="real_late_start"
                        {% if end %}value="{{ task.real_late_start }}"{% endif %}/>
             </div>
             <div>
                 <label for="inputreal_early_end">Конец не ранее</label>
                 <input {% if not usermode and userid != responsible_id and userid != creator_id %}disabled{% endif %}
-                       class="form-control input-sm" id="inputreal_early_end" type="datetime-local" name="real_early_end"
+                       class="form-control input-sm" id="inputreal_early_end" type="datetime-local"
+                       name="real_early_end"
                        {% if end %}value="{{ task.real_early_end }}"{% endif %}/>
             </div>
             <div>
@@ -166,7 +171,7 @@
                        class="form-control input-sm" id="inputreal_late_end" type="datetime-local" name="real_late_end"
                        {% if end %}value="{{ task.real_late_end }}"{% endif %}/>
             </div>
-        <!------------------------------------------------------------------------------------------------------------------->
+            <!------------------------------------------------------------------------------------------------------------------->
         {% endif %}
         {% if usermode or userid == creator_id or userid == responsible_id %}
             <div>
