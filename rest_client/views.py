@@ -553,19 +553,28 @@ def add_tasks_leaf(request, pk):
     if not userid:
         return redirect('login')
     if 'add' in request.GET:
-        rest(POST, 'tasks/', {
+        save = {
             "tasks": {
                 "name": request.GET['name'],
-                "start": request.GET['start'],
-                "end": request.GET['end'],
+                "start": request.GET["start"] if request.GET["start"] != '' else None,
+                "end": request.GET["end"] if request.GET["end"] != '' else None,
                 "parent": pk,
                 "creator": userid,
-                "responsible": request.GET['responsible'],
-                "system": request.GET['system'],
-                "status": request.GET['status']
+                "responsible": int(request.GET['responsible']),
+                "system": int(request.GET['system']),
+                "status": request.GET['status'],
+                "real_early_start": request.GET["real_early_start"] if request.GET["real_early_start"] != '' else None,
+                "real_late_start": request.GET["real_late_start"] if request.GET["real_late_start"] != '' else None,
+                "real_early_end": request.GET["real_early_end"] if request.GET["real_early_end"] != '' else None,
+                "real_late_end": request.GET["real_late_end"] if request.GET["real_late_start"] != '' else None,
+                "duration": "{} {}:00:00".format(request.GET['durationD'] if 'durationD' in request.GET else '0',
+                                                request.GET['durationH'] if 'durationH' in request.GET else '0')
             },
             "isgroup": False
-        })
+        }
+        res = rest(POST, 'tasks/', save)
+        project = rest(GET, 'tasks/' + str(request.GET['parent'])).json()['tasks'][0]['project']
+        rest(GET, 'tasks/gettime/' + str(project) + '/')
         return redirect('/client/tasks/' + ("" if pk is None else str(pk)))
     context = {}
     systems_1 = []

@@ -45,7 +45,7 @@
         <div class="form-group">
             <label for="inputname">Название</label>
             <input {% if not usermode and userid != creator_id %}disabled{% endif %}
-                   class="form-control input-sm" id="inputname" type="text" name="name" value="{{ task.name }}">
+                   class="form-control input-sm" id="inputname" type="text" name="name" value="{{ task.name }}" required>
         </div>
         <div class="form-group">
             <label for="inputresponsible"><a href="/client/structures/{{ responsible_id }}">Ответственный</a></label>
@@ -86,7 +86,7 @@
             <div class="form-group">
                 <label for="inputstart">Статус</label>
                 <select {% if not usermode and userid != responsible_id and userid != creator_id %}disabled{% endif %}
-                        class="form-control input-sm" id="inputstart" name="status">
+                        class="form-control input-sm" id="inputstart" name="status" required>
                     <option value="NEW" {% if status == 'NEW' %}selected{% endif %}>Новая</option>
                     <option value="PRO" {% if status == 'PRO' %}selected{% endif %}>Выполняется</option>
                     <option value="COM" {% if status == 'COM' %}selected{% endif %}>Завершена</option>
@@ -104,7 +104,7 @@
                 <div class="col-xs-1">
                     <input {% if not usermode and userid != responsible_id and userid != creator_id %}disabled{% endif %}
                            class="form-control input-sm" id="inputdurationD" type="number" min="0"
-                           value="{{ durationD }}" name="durationD">
+                           value="{{ durationD }}" name="durationD" required>
                 </div>
                 <div class="col-xs-1">
                     д.
@@ -112,7 +112,7 @@
                 <div class="col-xs-1">
                     <input {% if not usermode and userid != responsible_id and userid != creator_id %}disabled{% endif %}
                            class="form-control input-sm" id="inputdurationH" type="number" min="0"
-                           value="{{ durationH }}" name="durationH">
+                           value="{{ durationH }}" name="durationH" required>
                 </div>
                 <div class="col-xs-1">
                     ч.

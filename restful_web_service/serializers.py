@@ -49,11 +49,16 @@ class ArtefactSerializer(serializers.ModelSerializer):
 
 class TaskGroupSerializer(serializers.ModelSerializer):
     child = TaskComponentSerializer(many=True, read_only=True)
+    
+    project = serializers.SerializerMethodField('project_f')
 
     class Meta:
         model = models.TaskGroup
         fields = '__all__'
 
+    @staticmethod
+    def project_f(o):
+        return o.project()
 
 class StructureComponentSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):

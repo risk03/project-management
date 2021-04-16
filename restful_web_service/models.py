@@ -10,6 +10,14 @@ class TaskComponent(models.Model):
     creator = models.ForeignKey("Employee", null=False, on_delete=models.CASCADE, related_name='creation')
     responsible = models.ForeignKey("Employee", null=False, on_delete=models.CASCADE, related_name='resonsibility')
 
+    def project(self):
+        if self.parent is None:
+            return self.id
+        project = self.parent
+        while project.parent:
+            project = project.parent
+        return project.id
+
     def deeper_tasks(self):
         raise NotImplementedError()
 
@@ -34,13 +42,7 @@ class TaskLeaf(TaskComponent):
     prop_late_start = models.DateTimeField(null=True, blank=True)
     prop_early_end = models.DateTimeField(null=True, blank=True)
     prop_late_end = models.DateTimeField(null=True, blank=True)
-
-    def project(self):
-        project = self.parent
-        while project.parent:
-            project = project.parent
-        return project.id
-
+    
     @property
     def tei(self):
         if self.prev.all():
@@ -159,10 +161,13 @@ class TaskGroup(TaskComponent):
         task.save()
         for next_task in task.next.all():
             if not next_task.early_start:
-                next_task.early_start = task.early_start + task.duration
+                next_task.early_start = task.early_end
+                next_task.save()
             else:
-                next_task.early_start = max(next_task.early_start, task.early_start + task.duration)
+                next_task.early_start = max(next_task.early_start, task.early_end)
+                next_task.save()
             next_task.save()
+            print(next_task)
             self.__rec_get_time_there(next_task)
 
     def __rec_get_time_back(self, task):
@@ -178,6 +183,12 @@ class TaskGroup(TaskComponent):
 
     def get_time(self):
         tasks = self.deeper_tasks()
+        for task in tasks:
+            task.prop_early_start = None
+            task.prop_late_start = None
+            task.prop_early_end = None
+            task.prop_late_end = None
+            task.save()
         for task in [x for x in tasks if not x.prev.all()]:
             task.early_start = datetime.datetime.fromtimestamp(0)
             task.save()
@@ -187,8 +198,8 @@ class TaskGroup(TaskComponent):
         for task in end:
             task.late_end = max_e
             task.save()
-        for task in end:
-            self.__rec_get_time_back(task)
+        #for task in end:
+        #    self.__rec_get_time_back(task)
 
     def deeper_tasks(self):
         tasks = []

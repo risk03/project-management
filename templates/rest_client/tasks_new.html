@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <!--suppress HtmlUnknownTarget, HtmlUnknownTarget -->
 <html lang="en">
 <head>
@@ -41,9 +41,25 @@
     <form>
         <div class="form-group">
             <label for="inputname">Название</label>
-            <input class="form-control input-lg" id="inputname" type="text" name="name" value="{{ name }}">
+            <input class="form-control input-lg" id="inputname" type="text" name="name" value="{{ name }}" required>
         </div>
-        {% if not is_group and pk %}
+        <div class="form-group">
+            <label for="inputresponsible">Ответственный</label>
+            <select class="form-control input-lg" id="inputresponsible" name="responsible">
+                {% for employee in employees %}
+                    <option value="{{ employee.id }}">
+                        {{ employee.short_name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="inputcreator"><a href="/client/structures/{{ userid }}">Создатель</a></label>
+            <input disabled class="form-control input-sm" id="inputcreator" type="text" value="{{ username }}">
+        </div>
+        <!------------------------------------------------------------------------------------------------------------------->
+        {% if not is_group %}
             <div class="form-group">
                 <label for="inputparent">Надзадача</label>
                 <select class="form-control input-lg" id="inputparent" name="parent">
@@ -53,18 +69,8 @@
                     {% endfor %}
                 </select>
             </div>
-        {% endif %}
         <div class="form-group">
-            <label for="inputresponsible">Ответственный</label>
-            <select class="form-control input-lg" id="inputresponsible" name="responsible">
-                {% for employee in employees %}
-                    <option value="{{ employee.id }}"
-                            {% if employee.id == responsible_id %}selected{% endif %}>{{ employee.short_name }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="inputsystem">Объект</label>
+            <label for="inputsystem">Система</label>
             <select class="form-control input-lg" id="inputsystem" name="system">
                 {% for system in systems %}
                     <option value="{{ system.id }}"
@@ -72,26 +78,66 @@
                 {% endfor %}
             </select>
         </div>
-        {% if not is_group %}
-            <div class="form-group">
-                <label for="inputstart">Статус</label>
-                <select class="form-control input-lg" id="inputstart" name="status">
-                    <option value="NEW" {% if status == 'NEW' %}selected{% endif %}>Новая</option>
-                    <option value="PRO" {% if status == 'PRO' %}selected{% endif %}>Выполняется</option>
-                    <option value="COM" {% if status == 'COM' %}selected{% endif %}>Завершена</option>
-                    <option value="REJ" {% if status == 'REJ' %}selected{% endif %}>Отклонена</option>
-                    <option value="REV" {% if status == 'REV' %}selected{% endif %}>Требуется доработка</option>
-                </select>
+        <div class="form-group">
+            <label for="inputstart">Статус</label>
+            <select class="form-control input-lg" id="inputstart" name="status" required>
+                <option value="NEW" {% if status == 'NEW' %}selected{% endif %}>Новая</option>
+                <option value="PRO" {% if status == 'PRO' %}selected{% endif %}>Выполняется</option>
+                <option value="COM" {% if status == 'COM' %}selected{% endif %}>Завершена</option>
+                <option value="REJ" {% if status == 'REJ' %}selected{% endif %}>Отклонена</option>
+                <option value="REV" {% if status == 'REV' %}selected{% endif %}>Требуется доработка</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="inputstart">Фактическое начало</label>
+            <input class="form-control input-lg" id="inputstart" type="datetime-local" name="start"
+                    value="{{ start }}">
+        </div>
+        <div class="form-group row" style="margin:0">
+            <label for="inputdurationD">Плановая продолжительность</label>
+            <div class="col-xs-1">
+                <input class="form-control input-sm" id="inputdurationD" type="number" min="0"
+                       value="{{ durationD }}" name="durationD" required>
             </div>
-            <div class="form-group">
-                <label for="inputstart">Начало</label>
-                <input class="form-control input-lg" id="inputstart" type="datetime-local" name="start"
-                       value="{{ start }}">
+            <div class="col-xs-1">
+                д.
             </div>
-            <div class="form-group">
-                <label for="inputend">Конец</label>
+            <div class="col-xs-1">
+                <input class="form-control input-sm" id="inputdurationH" type="number" min="0"
+                       value="{{ durationH }}" name="durationH" required>
+            </div>
+            <div class="col-xs-1">
+                ч.
+            </div>
+        </div>
+        <div class="form-group">
+                <label for="inputend">Фактический конец</label>
                 <input class="form-control input-lg" id="inputend" type="datetime-local" name="end" value="{{ end }}">
             </div>
+        <div>
+            <label for="inputreal_early_start">Начало не ранее</label>
+            <input class="form-control input-sm" id="inputreal_early_start" type="datetime-local"
+                   name="real_early_start"
+                   {% if end %}value="{{ task.real_early_start }}" {% endif %} />
+        </div>
+        <div>
+            <label for="inputreal_late_start">Начало не позднее</label>
+            <input class="form-control input-sm" id="inputreal_late_start" type="datetime-local"
+                   name="real_late_start"
+                   {% if end %}value="{{ task.real_late_start }}" {% endif %} />
+        </div>
+        <div>
+            <label for="inputreal_early_end">Конец не ранее</label>
+            <input class="form-control input-sm" id="inputreal_early_end" type="datetime-local"
+                   name="real_early_end"
+                   {% if end %}value="{{ task.real_early_end }}" {% endif %} />
+        </div>
+        <div>
+            <label for="inputreal_late_end">Конец не позднее</label>
+            <input class="form-control input-sm" id="inputreal_late_end" type="datetime-local" name="real_late_end"
+                   {% if end %}value="{{ task.real_late_end }}" {% endif %} />
+        </div>
+        <!------------------------------------------------------------------------------------------------------------------->
         {% endif %}
         <button type="submit" name="add" class="btn btn-primary">Добавить</button>
     </form>
