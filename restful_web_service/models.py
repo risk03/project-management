@@ -162,12 +162,9 @@ class TaskGroup(TaskComponent):
         for next_task in task.next.all():
             if not next_task.early_start:
                 next_task.early_start = task.early_end
-                next_task.save()
             else:
                 next_task.early_start = max(next_task.early_start, task.early_end)
-                next_task.save()
             next_task.save()
-            print(next_task)
             self.__rec_get_time_there(next_task)
 
     def __rec_get_time_back(self, task):
@@ -198,8 +195,8 @@ class TaskGroup(TaskComponent):
         for task in end:
             task.late_end = max_e
             task.save()
-        #for task in end:
-        #    self.__rec_get_time_back(task)
+        for task in end:
+            self.__rec_get_time_back(task)
 
     def deeper_tasks(self):
         tasks = []
