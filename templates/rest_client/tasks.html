@@ -126,7 +126,7 @@
             </div>
             <div class="form-group">
                 <label for="next" style="vertical-align:top">Следующие задачи</label>
-                <select multiple name="next">
+                <select multiple name="next" id="next">
                     {% for i in nexts %}
                         <option value="{{ i.id }}" {% if i.selected %} selected {% endif %} >
                             {{ i.name }}
@@ -136,7 +136,7 @@
             </div>
             <div class="form-group">
                 <label for="prev" style="vertical-align:top">Предыдущие задачи</label>
-                <select multiple name="prev">
+                <select multiple name="prev" id="prev">
                     {% for i in prevs %}
                         <option value="{{ i.id }}" {% if i.selected %} selected {% endif %} >
                             {{ i.name }}

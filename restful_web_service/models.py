@@ -190,6 +190,7 @@ class TaskGroup(TaskComponent):
             task.early_start = datetime.datetime.fromtimestamp(0)
             task.save()
             self.__rec_get_time_there(task)
+        tasks = self.deeper_tasks()
         end = [x for x in tasks if not x.next.all()]
         max_e = max([x.early_end for x in end])
         for task in end:

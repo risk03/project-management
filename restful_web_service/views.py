@@ -95,7 +95,7 @@ class ProjectLeaves(APIView):
     def deeper(o, out_list):
         for task in o.child.all():
             if hasattr(task, 'taskgroup'):
-                deeper(task, out_list)
+                ProjectLeaves.deeper(task.taskgroup, out_list)
             else:
                 out_list.append(task.taskleaf)
 

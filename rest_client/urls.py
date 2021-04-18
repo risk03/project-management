@@ -28,5 +28,6 @@ urlpatterns = [
     path('login/', views.login, name='login'),
     path('logout/', views.logout, name='logout'),
     path('artefacts/<int:pk>', views.artefact, name='artefact'),
-    path('artefacts/add/<int:pk>', views.artefact_add, name='artefact')
+    path('artefacts/add/<int:pk>', views.artefact_add, name='artefact'),
+    path('test/<int:pk>', views.test, name='test')
 ]

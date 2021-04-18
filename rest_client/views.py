@@ -86,6 +86,7 @@ def tasks(request, pk):
     if not userid:
         return redirect('login')
     j = rest(GET, 'tasks/' + str(pk)).json()['tasks'][0]
+    project_id = j['project']
     if 'delete' in request.GET:
         rest(DELETE, 'tasks/' + str(pk))
         return redirect('/client/tasks/' + ('' if j['parent'] is None else str(j['parent'])))
@@ -136,10 +137,11 @@ def tasks(request, pk):
         for i in rest(GET, 'artefacts/of/' + str(pk)).json()['artefacts']:
             artefacts.append({'id': i['id'], 'title': i['title']})
         context['artefacts'] = artefacts
-        project_id = j['project']
         context['nexts'] = []
         context['prevs'] = []
-        for t in rest(GET, 'project_leaves/' + str(project_id)).json()['tasks']:
+        resp = rest(GET, 'project_leaves/' + str(project_id))
+        resp = resp.json()
+        for t in resp['tasks']:
             context['nexts'].append({'id': t['id'], 'name': t['id']})
             context['prevs'].append({'id': t['id'], 'name': t['id']})
         for i in context['nexts']:
@@ -268,7 +270,7 @@ def structures(request, pk=None):
                 structures_1['name'] = i['name']
             else:
                 structures_1['is_group'] = False
-                structures_1['name'] = i['short_name']
+                structures_1['name'] = i['full_name']
             formated.append(structures_1)
     else:
         is_group = False
@@ -639,9 +641,10 @@ def task_details(request, pk):
                 microsecond=0) > datetime.datetime.strptime(end, '%Y-%m-%dT%H:%M:%SZ').replace(microsecond=0):
             end = task['prop_late_end']
     context['end'] = str(end)
-    context['taskslen'] = len(tasks_1)
+    context['taskslen'] = max([x['id'] for x in tasks_1]) + 1
     for i in range(len(tasks_1)):
         tasks_1[i]['local_id'] = i + 1
+    context['last_local_id'] = len(tasks_1) + 1
     context['tasks'] = tasks_1
     context['id'] = r['id']
     context['name'] = r['name']
@@ -684,3 +687,35 @@ def artefact_add(request, pk):
     context = {'pk': pk, 'userid': userid,
                'username': rest(GET, 'structures/' + str(userid)).json()['structures'][0]['short_name']}
     return render(request, 'rest_client/artefact_new.html', context)
+
+def test(request, pk):
+    userid = check_login(request.session)
+    if not userid:
+        return redirect('login')
+    context = {}
+    tasks_1 = []
+    r = rest(GET, 'tasks/' + str(pk)).json()['tasks'][0]
+    get_child(r, tasks_1)
+    start = None
+    end = None
+    for task in [x for x in tasks_1 if not x['prev']]:
+        if not start or datetime.datetime.strptime(task['prop_early_start'], '%Y-%m-%dT%H:%M:%SZ').replace(
+                microsecond=0) < datetime.datetime.strptime(start, '%Y-%m-%dT%H:%M:%SZ').replace(microsecond=0):
+            start = task['prop_early_start']
+    context['start'] = str(start)
+    for task in [x for x in tasks_1 if not x['next']]:
+        if not end or datetime.datetime.strptime(task['prop_late_end'], '%Y-%m-%dT%H:%M:%SZ').replace(
+                microsecond=0) > datetime.datetime.strptime(end, '%Y-%m-%dT%H:%M:%SZ').replace(microsecond=0):
+            end = task['prop_late_end']
+    context['end'] = str(end)
+    context['taskslen'] = max([x['id'] for x in tasks_1]) + 1
+    for i in range(len(tasks_1)):
+        tasks_1[i]['local_id'] = i + 1
+    context['last_local_id'] = len(tasks_1) + 1
+    context['tasks'] = tasks_1
+    context['id'] = r['id']
+    context['name'] = r['name']
+    context['is_group'] = 'child' in r
+    context['userid'] = userid
+    context['username'] = rest(GET, 'structures/' + str(userid)).json()['structures'][0]['short_name']
+    return render(request, 'rest_client/test.html', context)
